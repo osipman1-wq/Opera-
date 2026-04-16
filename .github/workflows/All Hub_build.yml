@@ -17,11 +17,11 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Set up Java 21
+      - name: Set up Java 17
         uses: actions/setup-java@v4
         with:
-          distribution: 'zulu'
-          java-version: '21'
+          distribution: 'temurin'
+          java-version: '17' # Using the most stable version for Android builds
 
       - name: Install Dependencies
         run: |
@@ -41,25 +41,28 @@ jobs:
           fi
           npx cap sync android
 
-      - name: Fix Duplicate Kotlin Classes
+      - name: Force Clean Build & Resolve Conflicts
         run: |
-          # This script forces all libraries to use the same Kotlin version to stop the "Duplicate Class" error
-          echo "configurations.all {
-              resolutionStrategy.eachDependency { DependencyResolveDetails details ->
-                  if (details.requested.group == 'org.jetbrains.kotlin') {
-                      details.useVersion '1.9.10'
+          # This forces the project to use one version of Kotlin to stop the Duplicate Class error
+          cd android
+          echo "subprojects {
+              project.configurations.all {
+                  resolutionStrategy.eachDependency { details ->
+                      if (details.requested.group == 'org.jetbrains.kotlin') {
+                          details.useVersion '1.9.10'
+                      }
                   }
               }
-          }" >> android/build.gradle
+          }" >> build.gradle
 
       - name: Build Android APK
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleDebug --stacktrace
+          ./gradlew clean assembleDebug --stacktrace
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: All-Hub-Final-APK
+          name: All-Hub-Final-App
           path: android/app/build/outputs/apk/debug/app-debug.apk
