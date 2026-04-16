@@ -1,0 +1,61 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Information about the user",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "displayName": { "type": "string" },
+        "username": { "type": "string" },
+        "photoURL": { "type": "string" }
+      },
+      "required": ["uid", "email"]
+    },
+    "Article": {
+      "title": "Article",
+      "description": "An article generated for Opera News Hub",
+      "type": "object",
+      "properties": {
+        "authorUid": { "type": "string" },
+        "title": { "type": "string" },
+        "topic": { "type": "string" },
+        "category": { "type": "string" },
+        "content": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["authorUid", "content", "createdAt"]
+    },
+    "Ebook": {
+      "title": "Ebook",
+      "description": "An E-book or Story generated",
+      "type": "object",
+      "properties": {
+        "authorUid": { "type": "string" },
+        "title": { "type": "string" },
+        "authorName": { "type": "string" },
+        "publisher": { "type": "string" },
+        "type": { "type": "string", "enum": ["story", "educational"] },
+        "content": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["authorUid", "content", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User profile data"
+    },
+    "/articles/{articleId}": {
+      "schema": "Article",
+      "description": "Saved Opera articles"
+    },
+    "/ebooks/{ebookId}": {
+      "schema": "Ebook",
+      "description": "Saved E-books and stories"
+    }
+  }
+}

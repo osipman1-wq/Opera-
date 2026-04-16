@@ -1,0 +1,72 @@
+// ===============================================================
+// All Hub Security Rules
+// ===============================================================
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isDocOwner() {
+      return isAuthenticated() && request.auth.uid == resource.data.authorUid;
+    }
+
+    function isValidEmail(email) {
+      return email is string && email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    }
+
+    function isValidDateString(dateStr) {
+      return dateStr is string && dateStr.matches("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.*Z?$");
+    }
+
+    // ===============================================================
+    // Collection Rules
+    // ===============================================================
+
+    // Users collection
+    match /users/{userId} {
+      allow read: if isOwner(userId);
+      allow write: if isOwner(userId) && 
+        request.resource.data.uid == userId &&
+        (request.resource.data.email == null || isValidEmail(request.resource.data.email));
+    }
+
+    // Articles collection
+    match /articles/{articleId} {
+      allow read: if isDocOwner();
+      allow create: if isAuthenticated() && 
+        request.resource.data.authorUid == request.auth.uid &&
+        request.resource.data.content.size() > 0 &&
+        request.resource.data.content.size() < 100000 &&
+        isValidDateString(request.resource.data.createdAt);
+      allow update: if isDocOwner() &&
+        request.resource.data.authorUid == resource.data.authorUid &&
+        isValidDateString(request.resource.data.createdAt);
+      allow delete: if isDocOwner();
+    }
+
+    // Ebooks collection
+    match /ebooks/{ebookId} {
+      allow read: if isDocOwner();
+      allow create: if isAuthenticated() && 
+        request.resource.data.authorUid == request.auth.uid &&
+        request.resource.data.content.size() > 0 &&
+        request.resource.data.content.size() < 500000 &&
+        isValidDateString(request.resource.data.createdAt);
+      allow update: if isDocOwner() &&
+        request.resource.data.authorUid == resource.data.authorUid &&
+        isValidDateString(request.resource.data.createdAt);
+      allow delete: if isDocOwner();
+    }
+  }
+}
