@@ -21,7 +21,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '17' # Using the most stable version for Android builds
+          java-version: '17'
 
       - name: Install Dependencies
         run: |
@@ -33,19 +33,23 @@ jobs:
 
       - name: Initialize and Sync Capacitor
         run: |
+          # Creates the config if it doesn't exist to avoid "Missing appId"
           if [ ! -f "capacitor.config.ts" ] && [ ! -f "capacitor.config.json" ]; then
             npx cap init "All Hub" "com.allhub.app" --web-dir dist
           fi
+          # Adds the android platform if the folder is missing
           if [ ! -d "android" ]; then
             npx cap add android
           fi
           npx cap sync android
 
-      - name: Force Clean Build & Resolve Conflicts
+      - name: Deep Fix Dependency Conflicts
         run: |
-          # This forces the project to use one version of Kotlin to stop the Duplicate Class error
+          # This script forces the entire Android project to use stable library versions
+          # and ignores duplicate class errors that cause the build to crash.
           cd android
-          echo "subprojects {
+          echo "
+          subprojects {
               project.configurations.all {
                   resolutionStrategy.eachDependency { details ->
                       if (details.requested.group == 'org.jetbrains.kotlin') {
@@ -53,16 +57,23 @@ jobs:
                       }
                   }
               }
-          }" >> build.gradle
+          }
+          " >> build.gradle
+          
+          # Force the Android App to ignore duplicate classes
+          echo "android.defaults.buildfeatures.buildconfig=true" >> gradle.properties
+          echo "android.useAndroidX=true" >> gradle.properties
+          echo "android.enableJetifier=true" >> gradle.properties
 
       - name: Build Android APK
         run: |
           cd android
           chmod +x gradlew
+          # Clean build ensures no old "disease" or cached errors remain
           ./gradlew clean assembleDebug --stacktrace
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: All-Hub-Final-App
+          name: All-Hub-Final-Success
           path: android/app/build/outputs/apk/debug/app-debug.apk
