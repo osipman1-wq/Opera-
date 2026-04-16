@@ -21,7 +21,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
-          java-version: '21' # This fixes the 'invalid source release' error
+          java-version: '21'
 
       - name: Install Dependencies
         run: |
@@ -33,27 +33,33 @@ jobs:
 
       - name: Initialize and Sync Capacitor
         run: |
-          # Create configuration if it is missing
           if [ ! -f "capacitor.config.ts" ] && [ ! -f "capacitor.config.json" ]; then
             npx cap init "All Hub" "com.allhub.app" --web-dir dist
           fi
-
-          # Add android platform if missing
           if [ ! -d "android" ]; then
             npx cap add android
           fi
-
-          # Sync web assets to the Android folder
           npx cap sync android
+
+      - name: Fix Duplicate Kotlin Classes
+        run: |
+          # This script forces all libraries to use the same Kotlin version to stop the "Duplicate Class" error
+          echo "configurations.all {
+              resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+                  if (details.requested.group == 'org.jetbrains.kotlin') {
+                      details.useVersion '1.9.10'
+                  }
+              }
+          }" >> android/build.gradle
 
       - name: Build Android APK
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleDebug
+          ./gradlew assembleDebug --stacktrace
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: All-Hub-APK
+          name: All-Hub-Final-APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
