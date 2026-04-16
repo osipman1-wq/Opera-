@@ -25,12 +25,16 @@ jobs:
       - name: Build Web Project
         run: npm run build
 
-      - name: Initialize and Sync Android
+      - name: Initialize Capacitor and Sync Android
         run: |
-          # If the android folder doesn't exist, add it
-          if [ ! -d "android" ]; then
-            npx cap add android
-          fi
+          # 1. Initialize Capacitor with the required App ID and Name
+          # This fixes the "Missing appId" error
+          npx cap init "All Hub" "com.allhub.app" --web-dir dist --force
+
+          # 2. Add the Android platform
+          npx cap add android
+
+          # 3. Sync the web code to the Android project
           npx cap sync android
 
       - name: Build Android APK
@@ -42,5 +46,5 @@ jobs:
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: all-hub-app
+          name: all-hub-debug-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
