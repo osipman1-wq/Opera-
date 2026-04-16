@@ -31,24 +31,20 @@ jobs:
       - name: Build Web Project
         run: npm run build
 
-      - name: Fresh Capacitor Android Setup
+      - name: Reset and Re-Initialize Android
         run: |
-          # Delete any existing android folder to prevent "Duplicate Class" errors
+          # Kill the old, broken folder
           rm -rf android
           
-          # Initialize configuration
+          # Re-initialize everything fresh
           npx cap init "All Hub" "com.allhub.app" --web-dir dist
-          
-          # Add a clean Android platform
           npx cap add android
-          
-          # Sync the build
           npx cap sync android
 
       - name: Force Fix Android Dependencies
         run: |
           cd android
-          # This forces all libraries to use a single version and ignores conflict warnings
+          # This forces all libraries to use Kotlin 1.9.10, killing the 'Duplicate Class' error
           echo "subprojects {
               project.configurations.all {
                   resolutionStrategy.eachDependency { details ->
@@ -59,18 +55,18 @@ jobs:
               }
           }" >> build.gradle
           
-          # Basic Android settings for compatibility
+          # Fix common Android build properties
           echo "android.useAndroidX=true" >> gradle.properties
           echo "android.enableJetifier=true" >> gradle.properties
 
-      - name: Build Final APK
+      - name: Final Build APK
         run: |
           cd android
           chmod +x gradlew
           ./gradlew assembleDebug --stacktrace
 
-      - name: Upload APK Artifact
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: All-Hub-Final-APK
+          name: All-Hub-Success-APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
