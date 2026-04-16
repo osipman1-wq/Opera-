@@ -1,30 +1,29 @@
 name: Build All Hub APK
-on: [push]
+
+on:
+  push:
+    branches: [ "main" ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
       - name: Install dependencies
-        run: npm install
+        run: |
+          npm install
+          npm install @capacitor/cli @capacitor/android
 
       - name: Build Web Project
         run: npm run build
 
-      - name: Build Android APK
-        run: |
-          npx cap sync
-          cd android && ./gradlew assembleDebug
-
-      - name: Upload APK Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-debug.apk
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+      - name: Capacitor Sync
+        run: npx cap sync android
