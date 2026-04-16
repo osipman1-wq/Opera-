@@ -17,11 +17,11 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Set up Java
+      - name: Set up Java 21
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
-          java-version: '17'
+          java-version: '21' # This fixes the 'invalid source release' error
 
       - name: Install Dependencies
         run: |
@@ -33,17 +33,17 @@ jobs:
 
       - name: Initialize and Sync Capacitor
         run: |
-          # Create config if missing (This fixes the AppId error)
+          # Create configuration if it is missing
           if [ ! -f "capacitor.config.ts" ] && [ ! -f "capacitor.config.json" ]; then
             npx cap init "All Hub" "com.allhub.app" --web-dir dist
           fi
 
-          # Add android platform if the folder is missing
+          # Add android platform if missing
           if [ ! -d "android" ]; then
             npx cap add android
           fi
 
-          # Sync web assets to Android
+          # Sync web assets to the Android folder
           npx cap sync android
 
       - name: Build Android APK
@@ -55,5 +55,5 @@ jobs:
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: All-Hub-Release-APK
+          name: All-Hub-APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
