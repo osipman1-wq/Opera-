@@ -23,30 +23,32 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Install Project Dependencies
+      - name: Install Dependencies
         run: |
           npm install
           npm install @capacitor/cli @capacitor/core @capacitor/android
 
-      - name: Build Web Assets
+      - name: Build Web Project
         run: npm run build
 
-      - name: Initialize and Sync Capacitor
+      - name: Fresh Capacitor Android Setup
         run: |
-          if [ ! -f "capacitor.config.ts" ] && [ ! -f "capacitor.config.json" ]; then
-            npx cap init "All Hub" "com.allhub.app" --web-dir dist
-          fi
-          if [ ! -d "android" ]; then
-            npx cap add android
-          fi
+          # Delete any existing android folder to prevent "Duplicate Class" errors
+          rm -rf android
+          
+          # Initialize configuration
+          npx cap init "All Hub" "com.allhub.app" --web-dir dist
+          
+          # Add a clean Android platform
+          npx cap add android
+          
+          # Sync the build
           npx cap sync android
 
-      - name: Force Dependency Resolution
+      - name: Force Fix Android Dependencies
         run: |
-          # This is the "Nuclear" fix for Duplicate Class and Kotlin version errors
           cd android
-          
-          # 1. Force a single Kotlin version across all plugins
+          # This forces all libraries to use a single version and ignores conflict warnings
           echo "subprojects {
               project.configurations.all {
                   resolutionStrategy.eachDependency { details ->
@@ -56,21 +58,19 @@ jobs:
                   }
               }
           }" >> build.gradle
-
-          # 2. Add build properties to ignore duplicate class conflicts
+          
+          # Basic Android settings for compatibility
           echo "android.useAndroidX=true" >> gradle.properties
           echo "android.enableJetifier=true" >> gradle.properties
-          echo "org.gradle.jvmargs=-Xmx2048m -XX:MaxMetaspaceSize=512m" >> gradle.properties
 
       - name: Build Final APK
         run: |
           cd android
           chmod +x gradlew
-          # 'clean' is essential here to wipe out the errors from your previous failed runs
-          ./gradlew clean assembleDebug --stacktrace
+          ./gradlew assembleDebug --stacktrace
 
-      - name: Upload APK
+      - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: All-Hub-Final-Success
+          name: All-Hub-Final-APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
