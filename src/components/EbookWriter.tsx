@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { generateEbook } from '../services/gemini';
-import { Loader2, BookOpen, Download, User, Building2, Type, History, Trash2, Clock } from 'lucide-react';
+import { Loader2, BookOpen, Download, User, Building2, Type, History, Trash2, Clock, AlertCircle } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { motion, AnimatePresence } from 'motion/react';
 import { db, handleFirestoreError, OperationType } from '../firebase';
@@ -21,44 +21,77 @@ export default function EbookWriter() {
 
   useEffect(() => {
     if (!user) return;
-    const q = query(
-      collection(db, 'ebooks'),
-      where('authorUid', '==', user.uid),
-      orderBy('createdAt', 'desc')
-    );
+    
+    let unsubscribe: () => void = () => {};
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const items = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setHistory(items);
-    }, (err) => {
-      handleFirestoreError(err, OperationType.GET, 'ebooks');
-    });
+    if (!(user as any).isLocal) {
+      const q = query(
+        collection(db, 'ebooks'),
+        where('authorUid', '==', user.uid),
+        orderBy('createdAt', 'desc')
+      );
+
+      unsubscribe = onSnapshot(q, (snapshot) => {
+        const items = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setHistory(items);
+      }, (err) => {
+        handleFirestoreError(err, OperationType.GET, 'ebooks');
+      });
+    } else {
+      // Local Guest Mode
+      const localData = localStorage.getItem('hubLocalEbooks') || '[]';
+      try {
+        setHistory(JSON.parse(localData));
+      } catch (e) {
+        console.error("Local data corruption:", e);
+        setHistory([]);
+      }
+    }
 
     return () => unsubscribe();
   }, [user]);
 
   const saveToFirestore = async (ebookContent: string) => {
     if (!user) return;
-    try {
-      await addDoc(collection(db, 'ebooks'), {
-        authorUid: user.uid,
-        title: topic,
-        authorName: author,
-        publisher,
-        type,
-        content: ebookContent,
-        createdAt: new Date().toISOString()
-      });
-    } catch (err) {
-      handleFirestoreError(err, OperationType.CREATE, 'ebooks');
+    
+    const newEbook = {
+      authorUid: user.uid,
+      title: topic,
+      authorName: author,
+      publisher,
+      type,
+      content: ebookContent,
+      createdAt: new Date().toISOString()
+    };
+
+    if (!(user as any).isLocal) {
+      try {
+        await addDoc(collection(db, 'ebooks'), newEbook);
+      } catch (err) {
+        handleFirestoreError(err, OperationType.CREATE, 'ebooks');
+      }
+    } else {
+      // Save locally
+      const updatedHistory = [{ id: `local_${Date.now()}`, ...newEbook }, ...history];
+      setHistory(updatedHistory);
+      localStorage.setItem('hubLocalEbooks', JSON.stringify(updatedHistory));
     }
   };
 
   const handleDelete = async (id: string) => {
-    try {
-      await deleteDoc(doc(db, 'ebooks', id));
-    } catch (err) {
-      handleFirestoreError(err, OperationType.DELETE, `ebooks/${id}`);
+    if (!user) return;
+
+    if (!(user as any).isLocal) {
+      try {
+        await deleteDoc(doc(db, 'ebooks', id));
+      } catch (err) {
+        handleFirestoreError(err, OperationType.DELETE, `ebooks/${id}`);
+      }
+    } else {
+      // Delete locally
+      const updatedHistory = history.filter(item => item.id !== id);
+      setHistory(updatedHistory);
+      localStorage.setItem('hubLocalEbooks', JSON.stringify(updatedHistory));
     }
   };
 
@@ -180,8 +213,8 @@ export default function EbookWriter() {
         </button>
 
         {error && (
-          <div className="mt-4 p-4 bg-red-50 text-red-600 rounded-xl flex items-center gap-2 text-sm">
-            <Loader2 className="opacity-0 w-0" />
+          <div className="mt-4 p-4 bg-neutral-50 text-neutral-500 rounded-xl flex items-center gap-2 text-xs font-medium border border-neutral-100">
+             <AlertCircle size={14} className="text-neutral-400" />
             {error}
           </div>
         )}

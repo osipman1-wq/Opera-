@@ -25,44 +25,77 @@ export default function OperaWriter() {
 
   useEffect(() => {
     if (!user) return;
-    const q = query(
-      collection(db, 'articles'),
-      where('authorUid', '==', user.uid),
-      orderBy('createdAt', 'desc')
-    );
+    
+    let unsubscribe: () => void = () => {};
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const items = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setHistory(items);
-    }, (err) => {
-      handleFirestoreError(err, OperationType.GET, 'articles');
-    });
+    if (!(user as any).isLocal) {
+      const q = query(
+        collection(db, 'articles'),
+        where('authorUid', '==', user.uid),
+        orderBy('createdAt', 'desc')
+      );
+
+      unsubscribe = onSnapshot(q, (snapshot) => {
+        const items = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setHistory(items);
+      }, (err) => {
+        handleFirestoreError(err, OperationType.GET, 'articles');
+      });
+    } else {
+      // Local Guest Mode
+      const localData = localStorage.getItem('hubLocalArticles') || '[]';
+      try {
+        setHistory(JSON.parse(localData));
+      } catch (e) {
+        console.error("Local data corruption:", e);
+        setHistory([]);
+      }
+    }
 
     return () => unsubscribe();
   }, [user]);
 
   const saveToFirestore = async (articleContent: string, imageUrl: string) => {
     if (!user) return;
-    try {
-      await addDoc(collection(db, 'articles'), {
-        authorUid: user.uid,
-        title: topic,
-        topic,
-        category,
-        content: articleContent,
-        imageUrl,
-        createdAt: new Date().toISOString()
-      });
-    } catch (err) {
-      handleFirestoreError(err, OperationType.CREATE, 'articles');
+    
+    const newArticle = {
+      authorUid: user.uid,
+      title: topic,
+      topic,
+      category,
+      content: articleContent,
+      imageUrl,
+      createdAt: new Date().toISOString()
+    };
+
+    if (!(user as any).isLocal) {
+      try {
+        await addDoc(collection(db, 'articles'), newArticle);
+      } catch (err) {
+        handleFirestoreError(err, OperationType.CREATE, 'articles');
+      }
+    } else {
+      // Save locally
+      const updatedHistory = [{ id: `local_${Date.now()}`, ...newArticle }, ...history];
+      setHistory(updatedHistory);
+      localStorage.setItem('hubLocalArticles', JSON.stringify(updatedHistory));
     }
   };
 
   const handleDelete = async (id: string) => {
-    try {
-      await deleteDoc(doc(db, 'articles', id));
-    } catch (err) {
-      handleFirestoreError(err, OperationType.DELETE, `articles/${id}`);
+    if (!user) return;
+
+    if (!(user as any).isLocal) {
+      try {
+        await deleteDoc(doc(db, 'articles', id));
+      } catch (err) {
+        handleFirestoreError(err, OperationType.DELETE, `articles/${id}`);
+      }
+    } else {
+      // Delete locally
+      const updatedHistory = history.filter(item => item.id !== id);
+      setHistory(updatedHistory);
+      localStorage.setItem('hubLocalArticles', JSON.stringify(updatedHistory));
     }
   };
 
@@ -164,8 +197,8 @@ export default function OperaWriter() {
         </div>
 
         {error && (
-          <div className="mt-4 p-4 bg-red-50 text-red-600 rounded-xl flex items-center gap-2 text-sm">
-            <AlertCircle size={18} />
+          <div className="mt-4 p-4 bg-neutral-50 text-neutral-500 rounded-xl flex items-center gap-2 text-xs font-medium border border-neutral-100">
+            <AlertCircle size={14} />
             {error}
           </div>
         )}

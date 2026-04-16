@@ -8,18 +8,15 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 function AdPlaceholder() {
   return (
     <div className="max-w-7xl mx-auto px-4 mb-8">
-      <div className="bg-neutral-50 border-2 border-dashed border-neutral-200 rounded-2xl p-4 text-center">
+      <div className="bg-neutral-50 border border-neutral-100 rounded-2xl p-4 text-center">
         <div className="flex flex-col items-center gap-2">
-          <span className="text-[10px] uppercase font-bold tracking-widest text-neutral-400">Sponsored Content</span>
-          <div className="w-full h-24 flex items-center justify-center bg-white rounded-xl border border-neutral-100 shadow-sm">
+          <span className="text-[10px] uppercase font-bold tracking-[0.2em] text-neutral-300">Premium Space</span>
+          <div className="w-full h-24 flex items-center justify-center bg-white rounded-xl border border-neutral-100/50 shadow-sm">
             <div className="text-center">
-              <p className="text-sm font-medium text-neutral-400">Ad Container Ready</p>
-              <p className="text-[10px] text-neutral-300 font-mono mt-1">ID: ca-app-pub-7630905345973270/6585884409</p>
+              <Sparkles className="text-neutral-100 mx-auto mb-1" size={20} />
+              <p className="text-[10px] font-bold uppercase tracking-widest text-neutral-200">Ad Space Reserved</p>
             </div>
           </div>
-          <p className="text-[9px] text-neutral-400 max-w-sm mx-auto mt-2 leading-relaxed">
-            Note: AdMob IDs are used for Native Mobile Apps. For this web hub, consider using Google AdSense which is optimized for browser-based traffic.
-          </p>
         </div>
       </div>
     </div>
@@ -181,15 +178,15 @@ function AppContent() {
           <div className="bg-neutral-900 p-4 rounded-2xl shadow-xl animate-bounce">
             <Feather className="text-white" size={32} />
           </div>
-          <p className="text-neutral-400 font-medium animate-pulse uppercase tracking-widest text-xs">All Hub Loading...</p>
+          <p className="text-neutral-400 font-medium uppercase tracking-[0.3em] text-[10px]">Initializing Hub...</p>
         </div>
       </div>
     );
   }
 
-  if (!user) {
-    return <LoginView />;
-  }
+  // We no longer block on !user because the AuthContext provides a Local User fallback.
+  // We only show LoginView if the user explicitly wants to login/signup.
+  // For now, we'll make LoginView a modal or just removed as per request to "not ask".
 
   return (
     <div className="min-h-screen bg-[#fafaf9]">
@@ -236,24 +233,42 @@ function AppContent() {
                 <div className="hidden md:flex items-center gap-2 text-neutral-400">
                   <Sparkles size={16} />
                   <span className="text-[10px] uppercase tracking-[0.2em] font-bold">
-                    {user.isAnonymous ? 'Guest Experience' : 'Logged In'}
+                    {(user as any)?.isLocal ? 'Offline Session' : user?.isAnonymous ? 'Cloud Guest' : 'Professional Account'}
                   </span>
                 </div>
                 <div className="flex items-center gap-3 border-l border-neutral-200 pl-4">
-                  {user.photoURL ? (
-                    <img src={user.photoURL} alt="Profile" className="w-8 h-8 rounded-full border border-neutral-200" />
+                  {(user as any)?.isLocal ? (
+                     <button 
+                      onClick={() => window.location.reload()} 
+                      className="flex items-center gap-2 bg-neutral-900 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-neutral-800 transition-all shadow-lg"
+                    >
+                      <UserCircle size={14} /> Full Account
+                    </button>
+                  ) : user?.isAnonymous ? (
+                    <button 
+                      onClick={() => window.location.reload()} 
+                      className="flex items-center gap-2 bg-neutral-900 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-neutral-800 transition-all shadow-lg"
+                    >
+                      <UserCircle size={14} /> Account Setup
+                    </button>
                   ) : (
-                    <div className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center">
-                      <User size={16} className={user.isAnonymous ? "text-neutral-300" : "text-neutral-400"} />
-                    </div>
+                    <>
+                      {user?.photoURL ? (
+                        <img src={user.photoURL} alt="Profile" className="w-8 h-8 rounded-full border border-neutral-200" />
+                      ) : (
+                        <div className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center">
+                          <User size={16} className="text-neutral-400" />
+                        </div>
+                      )}
+                      <button 
+                        onClick={logout}
+                        className="p-2 text-neutral-400 hover:text-neutral-900 transition-colors tooltip"
+                        title="Log Out"
+                      >
+                        <LogOut size={20} />
+                      </button>
+                    </>
                   )}
-                  <button 
-                    onClick={logout}
-                    className="p-2 text-neutral-400 hover:text-neutral-900 transition-colors tooltip"
-                    title={user.isAnonymous ? "Leave Guest Session" : "Log Out"}
-                  >
-                    <LogOut size={20} />
-                  </button>
                 </div>
               </div>
             </div>
