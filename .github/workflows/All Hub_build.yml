@@ -17,11 +17,11 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Set up Java 17
+      - name: Set up Java 21
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
-          java-version: '17'
+          distribution: 'zulu'
+          java-version: '21' # This fixes the 'invalid source release: 21' error
 
       - name: Install Dependencies
         run: |
@@ -31,20 +31,18 @@ jobs:
       - name: Build Web Project
         run: npm run build
 
-      - name: Reset and Re-Initialize Android
+      - name: Reset and Sync Capacitor
         run: |
-          # Kill the old, broken folder
+          # Fresh start: delete old android folder and re-add to avoid 'Duplicate Class'
           rm -rf android
-          
-          # Re-initialize everything fresh
           npx cap init "All Hub" "com.allhub.app" --web-dir dist
           npx cap add android
           npx cap sync android
 
-      - name: Force Fix Android Dependencies
+      - name: Force Dependency Resolution
         run: |
+          # This script forces all plugins to use a single Kotlin version (1.9.10)
           cd android
-          # This forces all libraries to use Kotlin 1.9.10, killing the 'Duplicate Class' error
           echo "subprojects {
               project.configurations.all {
                   resolutionStrategy.eachDependency { details ->
@@ -59,7 +57,7 @@ jobs:
           echo "android.useAndroidX=true" >> gradle.properties
           echo "android.enableJetifier=true" >> gradle.properties
 
-      - name: Final Build APK
+      - name: Build Final APK
         run: |
           cd android
           chmod +x gradlew
@@ -68,5 +66,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: All-Hub-Success-APK
+          name: All-Hub-Final-APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
