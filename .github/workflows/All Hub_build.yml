@@ -17,6 +17,12 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
       - name: Install Dependencies
         run: |
           npm install
@@ -25,16 +31,19 @@ jobs:
       - name: Build Web Project
         run: npm run build
 
-      - name: Initialize Capacitor and Sync Android
+      - name: Initialize and Sync Capacitor
         run: |
-          # 1. Initialize Capacitor with the required App ID and Name
-          # This fixes the "Missing appId" error
-          npx cap init "All Hub" "com.allhub.app" --web-dir dist --force
+          # Create config if missing (This fixes the AppId error)
+          if [ ! -f "capacitor.config.ts" ] && [ ! -f "capacitor.config.json" ]; then
+            npx cap init "All Hub" "com.allhub.app" --web-dir dist
+          fi
 
-          # 2. Add the Android platform
-          npx cap add android
+          # Add android platform if the folder is missing
+          if [ ! -d "android" ]; then
+            npx cap add android
+          fi
 
-          # 3. Sync the web code to the Android project
+          # Sync web assets to Android
           npx cap sync android
 
       - name: Build Android APK
@@ -46,5 +55,5 @@ jobs:
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: all-hub-debug-apk
+          name: All-Hub-Release-APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
