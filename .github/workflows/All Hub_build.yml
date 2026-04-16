@@ -1,0 +1,76 @@
+name: Build All Hub APK
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Install Project Dependencies
+        run: |
+          npm install
+          npm install @capacitor/cli @capacitor/core @capacitor/android
+
+      - name: Build Web Assets
+        run: npm run build
+
+      - name: Initialize and Sync Capacitor
+        run: |
+          if [ ! -f "capacitor.config.ts" ] && [ ! -f "capacitor.config.json" ]; then
+            npx cap init "All Hub" "com.allhub.app" --web-dir dist
+          fi
+          if [ ! -d "android" ]; then
+            npx cap add android
+          fi
+          npx cap sync android
+
+      - name: Force Dependency Resolution
+        run: |
+          # This is the "Nuclear" fix for Duplicate Class and Kotlin version errors
+          cd android
+          
+          # 1. Force a single Kotlin version across all plugins
+          echo "subprojects {
+              project.configurations.all {
+                  resolutionStrategy.eachDependency { details ->
+                      if (details.requested.group == 'org.jetbrains.kotlin') {
+                          details.useVersion '1.9.10'
+                      }
+                  }
+              }
+          }" >> build.gradle
+
+          # 2. Add build properties to ignore duplicate class conflicts
+          echo "android.useAndroidX=true" >> gradle.properties
+          echo "android.enableJetifier=true" >> gradle.properties
+          echo "org.gradle.jvmargs=-Xmx2048m -XX:MaxMetaspaceSize=512m" >> gradle.properties
+
+      - name: Build Final APK
+        run: |
+          cd android
+          chmod +x gradlew
+          # 'clean' is essential here to wipe out the errors from your previous failed runs
+          ./gradlew clean assembleDebug --stacktrace
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: All-Hub-Final-Success
+          path: android/app/build/outputs/apk/debug/app-debug.apk
