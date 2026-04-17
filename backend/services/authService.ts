@@ -2,13 +2,11 @@ import pool from '../db.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { OAuth2Client } from 'google-auth-library';
-import { v4 as uuidv4 } from 'crypto';
-
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback-dev-secret-change-in-production';
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
 
 function generateUid(): string {
-  return Math.random().toString(36).substring(2) + Date.now().toString(36);
+  return Math.random().toString(36).substring(2, 11) + Date.now().toString(36);
 }
 
 export function signToken(uid: string, email: string): string {
