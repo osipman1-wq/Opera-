@@ -6,6 +6,7 @@ import path from "path";
 import cors from "cors";
 import { fileURLToPath } from "url";
 import { createServer as createViteServer } from "vite";
+import { generateContent } from "./backend/services/aiService.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -45,6 +46,30 @@ async function startServer() {
       prefix: key.slice(0, 4),
       length: key.length
     });
+  });
+
+  // Generate content via Gemini (backend only)
+  api.post("/generate", async (req, res) => {
+    try {
+      const { type, params } = req.body;
+      if (!type || !params) {
+        return res.status(400).json({ error: "Missing type or params" });
+      }
+
+      const content = await generateContent(type, params);
+
+      if (type === 'opera') {
+        return res.json({
+          content,
+          imageUrl: `https://picsum.photos/seed/${encodeURIComponent(params.topic)}/800/450`
+        });
+      }
+
+      return res.json({ content });
+    } catch (error: any) {
+      console.error("[API /generate] Error:", error);
+      return res.status(500).json({ error: "Generation failed", message: error.message });
+    }
   });
 
   // Strict API 404

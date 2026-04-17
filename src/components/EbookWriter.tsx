@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { generateEbook } from '../services/geminiService';
+import { generateEbook } from '../services/aiClient';
 import { Loader2, BookOpen, Download, User, Building2, Type, History, Trash2, Clock, AlertCircle, Copy, Check } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { motion, AnimatePresence } from 'motion/react';
