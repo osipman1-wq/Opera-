@@ -7,6 +7,8 @@ import cors from "cors";
 import { fileURLToPath } from "url";
 import { createServer as createViteServer } from "vite";
 import { generateContent } from "./backend/services/aiService.js";
+import authRoutes from "./backend/routes/authRoutes.js";
+import contentRoutes from "./backend/routes/contentRoutes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -30,23 +32,21 @@ async function startServer() {
   // 3. API ROUTER
   const api = express.Router();
   
-  // API Health & Diagnostics
+  // Health
   api.get("/health", (req, res) => {
     res.status(200).json({ 
       status: "alive", 
       time: new Date().toISOString(),
-      apiKeyPresent: !!process.env.GEMINI_API_KEY
+      apiKeyPresent: !!process.env.GEMINI_API_KEY,
+      googleConfigured: !!process.env.GOOGLE_CLIENT_ID
     });
   });
 
-  api.get("/debug-key", (req, res) => {
-    const key = process.env.GEMINI_API_KEY || "";
-    res.status(200).json({
-      status: key ? "configured" : "missing",
-      prefix: key.slice(0, 4),
-      length: key.length
-    });
-  });
+  // Auth routes
+  api.use("/auth", authRoutes);
+
+  // Content CRUD routes
+  api.use("/content", contentRoutes);
 
   // Generate content via Gemini (backend only)
   api.post("/generate", async (req, res) => {
@@ -101,18 +101,13 @@ async function startServer() {
   // 5. GLOBAL ERROR HANDLER
   app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
     console.error(`[Fatal Error] ${req.method} ${req.url}:`, err);
-    
-    // Always return JSON for API errors
     if (req.url.startsWith("/api") || req.xhr) {
       return res.status(err.status || 500).json({
         error: "Server Error",
         message: err.message || "An unexpected error occurred.",
-        stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
       });
     }
-    
-    // Default fallback
-    res.status(500).send("<h1>Internal Server Error</h1><p>The server encountered an error.</p>");
+    res.status(500).send("<h1>Internal Server Error</h1>");
   });
 
   app.listen(PORT, "0.0.0.0", () => {

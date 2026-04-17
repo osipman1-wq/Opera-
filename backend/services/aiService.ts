@@ -5,67 +5,93 @@ let genAI: GoogleGenAI | null = null;
 function getGenAI() {
   if (!genAI) {
     const rawApiKey = process.env.GEMINI_API_KEY;
-    console.log(`[aiService] Checking GEMINI_API_KEY environment variable... (Present: ${!!rawApiKey})`);
-    
     if (!rawApiKey || rawApiKey.trim() === '') {
-      console.error("[aiService] GEMINI_API_KEY is unset or empty.");
-      throw new Error("GEMINI_API_KEY environment variable is missing on the server. Please ensure it is set in the environment or .env file.");
+      throw new Error("GEMINI_API_KEY environment variable is missing on the server.");
     }
-
-    const apiKey = rawApiKey.trim();
-    
-    // Safety check: Log the first and last 2 characters to verify presence and basic format
-    const maskedKey = apiKey.length > 5 
-      ? `${apiKey.slice(0, 4)}...${apiKey.slice(-4)}` 
-      : "***";
-    console.log(`[aiService] Initializing GoogleGenAI with masked key: ${maskedKey}`);
-
-    genAI = new GoogleGenAI({ apiKey });
+    genAI = new GoogleGenAI({ apiKey: rawApiKey.trim() });
   }
   return genAI;
 }
 
-const SYSTEM_PROMPT = `You are a professional Nigerian news and content writer specialized in Opera News Hub content and educational eBooks.
-Rules:
-1. Write clear, factual, neutral content.
-2. No clickbait headlines.
-3. No fake information - strictly verify logic or stick to general facts.
-4. Short paragraphs for mobile reading (Opera News Hub users predominantly use mobile).
-5. Opera News Hub compliant format: Engaging yet professional.
-6. Include headline + subheadings + conclusion.
-7. Use Markdown for formatting.
+const OPERA_SYSTEM_PROMPT = `You are a professional Nigerian content writer and editor specialized in Opera News Hub. You write content that consistently gets APPROVED and MONETIZED.
 
-Task: Generate high-quality, sanitized content based on user input.`;
+OPERA NEWS HUB RULES YOU MUST FOLLOW:
+
+CONTENT QUALITY:
+- Write 700–1200 words for maximum performance (minimum 300 words)
+- Use clear structure: Strong headline → Hook introduction → Organized body with subheadings → Conclusion
+- Write in clean, readable English — no slang overload, no broken English, no SMS-style writing
+- Short paragraphs for mobile readers
+- Add real insight, not just information
+
+APPROVED NICHES: News (fact-based), Education, Technology, Health (basic, no medical claims), Relationships (clean/respectful), Finance (basic advice)
+
+CONTENT FORMAT:
+- Use Markdown for formatting (## for subheadings, **bold** for emphasis)
+- Include 2–4 subheadings in the body
+- Write factual, honest headlines — no exaggeration
+- Example of good headline: "5 Ways Students Can Earn Money Online in Nigeria"
+- Example of bad headline: "You Won't Believe What Happened Next!!!"
+
+STRICTLY FORBIDDEN (INSTANT REJECTION):
+- Plagiarism or copied content
+- Generic, robotic, or repetitive AI patterns
+- Clickbait or misleading titles that don't match content
+- Adult/sexual content of any kind
+- Hate speech, tribal or religious attacks, political incitement
+- Violence, gore, or sensational crime coverage
+- "Get rich quick" schemes, fake investments, scam content
+- Keyword stuffing or spam writing
+- Content under 300 words
+- Fake news, rumors, or unverified claims
+
+WINNING STRATEGY:
+- Focus on "How-to" articles, Top 5/Top 10 lists, educational breakdowns, trending safe topics
+- Write human-like content with original perspective
+- Every article must feel written by a knowledgeable person, not a generic AI`;
+
+const EBOOK_SYSTEM_PROMPT = `You are a professional author and manuscript architect. You create structured, well-written eBook manuscripts with real depth and original voice.
+
+MANUSCRIPT REQUIREMENTS:
+- Write compelling, original content with genuine insight
+- Use clear chapter structure with proper headings
+- Include practical examples and actionable advice
+- Write in clean, professional English
+- Format using Markdown (# for chapters, ## for sections, **bold** for key terms)
+
+STRUCTURE TO FOLLOW:
+1. Cover Page (Title, Author, Publisher)
+2. Copyright Notice
+3. Table of Contents
+4. Preface or Introduction
+5. Main Chapters (minimum 3, each 400–800 words)
+6. Conclusion
+7. About the Author`;
 
 export async function generateContent(type: 'opera' | 'ebook', params: any) {
   const ai = getGenAI();
   
   let promptText = "";
-  let modelName = "gemini-3-flash-preview"; // Basic text tasks
+  let modelName = "gemini-2.0-flash";
 
   if (type === 'opera') {
-    promptText = `${SYSTEM_PROMPT}
-    
-    Topic: ${params.topic}
-    Category: ${params.category}
-    
-    Please write a professional Nigerian-focused news article suitable for Opera News Hub. Focus on the "${params.category}" perspective.`;
+    promptText = `${OPERA_SYSTEM_PROMPT}
+
+Now write a professional Opera News Hub article:
+Topic: ${params.topic}
+Category: ${params.category}
+Focus on the "${params.category}" angle. Make it engaging, factual, and mobile-friendly.`;
   } else if (type === 'ebook') {
-    modelName = "gemini-3.1-pro-preview"; // Complex text tasks
-    promptText = `${SYSTEM_PROMPT}
-    
-    Generate a professional eBook manuscript.
-    Title: ${params.topic}
-    Author: ${params.author}
-    Publisher: ${params.publisher}
-    Type: ${params.type === 'story' ? 'Fiction/Story' : 'Educational/Non-Fiction'}
-    
-    Structure:
-    1. Cover Page Title
-    2. Copyright Notice
-    3. Detailed Table of Contents
-    4. Comprehensive Chapters (at least 3 detailed chapters)
-    5. Conclusion and References`;
+    modelName = "gemini-2.0-flash";
+    promptText = `${EBOOK_SYSTEM_PROMPT}
+
+Now write a complete eBook manuscript:
+Title: ${params.topic}
+Author: ${params.author}
+Publisher: ${params.publisher}
+Genre: ${params.type === 'story' ? 'Fiction / Story' : 'Educational / Non-Fiction'}
+
+Write the full manuscript with all sections. Make it comprehensive and original.`;
   }
 
   try {
@@ -76,61 +102,23 @@ export async function generateContent(type: 'opera' | 'ebook', params: any) {
 
     const text = response.text || "";
     if (!text) {
-      console.error(`[aiService] ${type} generation returned empty text.`);
       throw new Error("AI returned empty response");
     }
     
     return sanitizeOutput(text);
   } catch (error: any) {
     console.error(`[aiService] ${type.toUpperCase()} Generation Failed:`, error);
-    // Preserving the original message but making it more descriptive
     throw new Error(`AI Service Error (${type}): ${error.message || "Unknown error"}`);
-  }
-}
-
-export async function generateImage(title: string, content: string) {
-  const ai = getGenAI();
-  const promptText = `Professional, high-quality editorial photograph for a news article titled: "${title}". 
-  Context: ${content.slice(0, 300)}. 
-  Style: Photojournalism, cinematic lighting, realistic. No text overlay.`;
-
-  try {
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash-image",
-      contents: promptText,
-      config: {
-        imageConfig: { aspectRatio: "16:9" }
-      }
-    });
-
-    // The image part is in response.candidates[0].content.parts
-    const part = response.candidates?.[0]?.content?.parts?.find(p => p.inlineData);
-    return part ? `data:image/png;base64,${part.inlineData.data}` : null;
-  } catch (err) {
-    console.error("Image generation failed:", err);
-    return null;
   }
 }
 
 function sanitizeOutput(text: string): string {
   if (!text) return "";
-  
   let cleaned = text.trim();
-  
-  // Remove markdown block wraps if present
   cleaned = cleaned.replace(/^```markdown\n?/, "").replace(/\n?```$/, "");
   cleaned = cleaned.replace(/^```\n?/, "").replace(/\n?```$/, "");
-
-  // Remove potential AI "meta" talk at beginning
-  cleaned = cleaned.replace(/^(Here is the article you requested:?|Sure, here's the content:?|Title:)/i, "").trim();
-
-  // Normalize newlines but preserve lists and headers
-  // We want double newlines for paragraphs for better rendering in many MD viewers
-  // But we don't want to break existing double+ newlines
-  cleaned = cleaned.replace(/\n\s*\n/g, "\n\n"); 
-  
-  // Optional: check for excessive whitespace
+  cleaned = cleaned.replace(/^(Here is the article you requested:?|Sure, here's the content:?|Here's the manuscript:?)/i, "").trim();
+  cleaned = cleaned.replace(/\n\s*\n/g, "\n\n");
   cleaned = cleaned.replace(/[ \t]{3,}/g, "  ");
-
   return cleaned;
 }

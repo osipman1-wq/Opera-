@@ -1,15 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { generateOperaArticle } from '../services/aiClient';
-import { Loader2, PenLine, CheckCircle2, AlertCircle, Image as ImageIcon, History, Trash2, Clock, Copy, Check } from 'lucide-react';
+import { Loader2, PenLine, CheckCircle2, AlertCircle, History, Trash2, Clock, Copy, Check } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { motion, AnimatePresence } from 'motion/react';
-import { db, handleFirestoreError, OperationType } from '../firebase';
-import { collection, addDoc, query, where, orderBy, onSnapshot, deleteDoc, doc, Timestamp } from 'firebase/firestore';
 import { useAuth } from '../AuthContext';
 
 const CATEGORIES = [
   'Entertainment', 'Politics', 'Lifestyle', 'Society', 'Sports', 'Technology', 'Business', 'Education'
 ];
+
+interface Article {
+  id: number;
+  title: string;
+  topic: string;
+  category: string;
+  content: string;
+  image_url: string;
+  created_at: string;
+}
 
 export default function OperaWriter() {
   const [topic, setTopic] = useState('');
@@ -19,84 +27,37 @@ export default function OperaWriter() {
   const [image, setImage] = useState('');
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState('');
-  const [history, setHistory] = useState<any[]>([]);
+  const [history, setHistory] = useState<Article[]>([]);
   const [showHistory, setShowHistory] = useState(false);
-  const { user } = useAuth();
+  const { token } = useAuth();
+
+  const authHeaders = token ? { Authorization: `Bearer ${token}` } : {};
 
   useEffect(() => {
-    if (!user) return;
-    
-    let unsubscribe: () => void = () => {};
+    if (!token) return;
+    fetch('/api/content/articles', { headers: authHeaders })
+      .then(r => r.json())
+      .then(data => Array.isArray(data) ? setHistory(data) : null)
+      .catch(() => null);
+  }, [token]);
 
-    if (!(user as any).isLocal) {
-      const q = query(
-        collection(db, 'articles'),
-        where('authorUid', '==', user.uid),
-        orderBy('createdAt', 'desc')
-      );
-
-      unsubscribe = onSnapshot(q, (snapshot) => {
-        const items = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        setHistory(items);
-      }, (err) => {
-        handleFirestoreError(err, OperationType.GET, 'articles');
-      });
-    } else {
-      // Local Guest Mode
-      const localData = localStorage.getItem('hubLocalArticles') || '[]';
-      try {
-        setHistory(JSON.parse(localData));
-      } catch (e) {
-        console.error("Local data corruption:", e);
-        setHistory([]);
-      }
-    }
-
-    return () => unsubscribe();
-  }, [user]);
-
-  const saveToFirestore = async (articleContent: string, imageUrl: string) => {
-    if (!user) return;
-    
-    const newArticle = {
-      authorUid: user.uid,
-      title: topic,
-      topic,
-      category,
-      content: articleContent,
-      imageUrl,
-      createdAt: new Date().toISOString()
-    };
-
-    if (!(user as any).isLocal) {
-      try {
-        await addDoc(collection(db, 'articles'), newArticle);
-      } catch (err) {
-        handleFirestoreError(err, OperationType.CREATE, 'articles');
-      }
-    } else {
-      // Save locally
-      const updatedHistory = [{ id: `local_${Date.now()}`, ...newArticle }, ...history];
-      setHistory(updatedHistory);
-      localStorage.setItem('hubLocalArticles', JSON.stringify(updatedHistory));
+  const saveArticle = async (articleContent: string, imageUrl: string) => {
+    if (!token) return;
+    const res = await fetch('/api/content/articles', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...authHeaders },
+      body: JSON.stringify({ title: topic, topic, category, content: articleContent, imageUrl })
+    });
+    if (res.ok) {
+      const saved = await res.json();
+      setHistory(prev => [saved, ...prev]);
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!user) return;
-
-    if (!(user as any).isLocal) {
-      try {
-        await deleteDoc(doc(db, 'articles', id));
-      } catch (err) {
-        handleFirestoreError(err, OperationType.DELETE, `articles/${id}`);
-      }
-    } else {
-      // Delete locally
-      const updatedHistory = history.filter(item => item.id !== id);
-      setHistory(updatedHistory);
-      localStorage.setItem('hubLocalArticles', JSON.stringify(updatedHistory));
-    }
+  const handleDelete = async (id: number) => {
+    if (!token) return;
+    await fetch(`/api/content/articles/${id}`, { method: 'DELETE', headers: authHeaders });
+    setHistory(prev => prev.filter(a => a.id !== id));
   };
 
   const handleGenerate = async () => {
@@ -109,14 +70,11 @@ export default function OperaWriter() {
       const data = await generateOperaArticle(topic, category);
       setContent(data.content || '');
       setImage(data.imageUrl || '');
-      
-      // Save to Firestore/Local
       if (data.content) {
-        await saveToFirestore(data.content, data.imageUrl || '');
+        await saveArticle(data.content, data.imageUrl || '');
       }
-    } catch (err) {
-      setError('Failed to generate article. Please try again.');
-      console.error(err);
+    } catch (err: any) {
+      setError(err.message || 'Failed to generate article. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -136,7 +94,7 @@ export default function OperaWriter() {
           Opera News Hub AI Writer
         </h2>
         <p className="text-neutral-500 mb-6 text-sm">
-          Optimized for high acceptance rates. Our AI follows all Opera guidelines to ensure your content is professional and engaging.
+          Optimized for high acceptance rates. Follows all Opera guidelines for professional, approved content.
         </p>
 
         <div className="space-y-4">
@@ -148,7 +106,7 @@ export default function OperaWriter() {
               type="text"
               value={topic}
               onChange={(e) => setTopic(e.target.value)}
-              placeholder="e.g. The impact of remote work on productivity in 2024"
+              placeholder="e.g. 5 Ways Nigerian Students Can Earn Online in 2026"
               className="w-full px-4 py-3 rounded-xl border border-neutral-200 focus:outline-none focus:ring-2 focus:ring-orange-500/20 transition-all"
             />
           </div>
@@ -191,60 +149,60 @@ export default function OperaWriter() {
         </div>
 
         {error && (
-          <div className="mt-4 p-4 bg-neutral-50 text-neutral-500 rounded-xl flex items-center gap-2 text-xs font-medium border border-neutral-100">
+          <div className="mt-4 p-4 bg-red-50 text-red-500 rounded-xl flex items-center gap-2 text-xs font-medium border border-red-100">
             <AlertCircle size={14} />
             {error}
           </div>
         )}
 
         {history.length > 0 && (
-          <div className="mt-8 pt-8 border-t border-neutral-100 px-2 sm:px-0">
-             <button 
-                onClick={() => setShowHistory(!showHistory)}
-                className="flex items-center gap-2 text-sm font-semibold text-neutral-500 hover:text-neutral-900 transition-colors mb-4"
-             >
-               <History size={16} /> {showHistory ? 'Hide Saved Articles' : `View Saved Articles (${history.length})`}
-             </button>
+          <div className="mt-8 pt-8 border-t border-neutral-100">
+            <button
+              onClick={() => setShowHistory(!showHistory)}
+              className="flex items-center gap-2 text-sm font-semibold text-neutral-500 hover:text-neutral-900 transition-colors mb-4"
+            >
+              <History size={16} /> {showHistory ? 'Hide Saved Articles' : `View Saved Articles (${history.length})`}
+            </button>
 
-             <AnimatePresence>
-               {showHistory && (
-                 <motion.div 
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    className="overflow-hidden space-y-3"
-                 >
-                   {history.map((item) => (
-                     <div key={item.id} className="p-4 bg-neutral-50 rounded-xl border border-neutral-200 flex items-center justify-between group">
-                       <div 
-                          className="flex-1 cursor-pointer"
-                          onClick={() => {
-                            setTopic(item.topic);
-                            setCategory(item.category);
-                            setContent(item.content);
-                            setImage(item.imageUrl);
-                            window.scrollTo({ top: 500, behavior: 'smooth' });
-                          }}
-                       >
-                         <h4 className="font-semibold text-neutral-800 line-clamp-1">{item.title}</h4>
-                         <div className="flex items-center gap-3 mt-1">
-                           <span className="text-[10px] bg-white border border-neutral-200 px-2 py-0.5 rounded text-neutral-500 uppercase font-bold tracking-wider">{item.category}</span>
-                           <span className="text-[10px] text-neutral-400 flex items-center gap-1 font-medium">
-                             <Clock size={10} /> {new Date(item.createdAt).toLocaleDateString()}
-                           </span>
-                         </div>
-                       </div>
-                       <button 
-                          onClick={() => handleDelete(item.id)}
-                          className="p-2 text-neutral-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all opacity-0 group-hover:opacity-100"
-                       >
-                         <Trash2 size={16} />
-                       </button>
-                     </div>
-                   ))}
-                 </motion.div>
-               )}
-             </AnimatePresence>
+            <AnimatePresence>
+              {showHistory && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  className="overflow-hidden space-y-3"
+                >
+                  {history.map((item) => (
+                    <div key={item.id} className="p-4 bg-neutral-50 rounded-xl border border-neutral-200 flex items-center justify-between group">
+                      <div
+                        className="flex-1 cursor-pointer"
+                        onClick={() => {
+                          setTopic(item.topic);
+                          setCategory(item.category);
+                          setContent(item.content);
+                          setImage(item.image_url);
+                          window.scrollTo({ top: 500, behavior: 'smooth' });
+                        }}
+                      >
+                        <h4 className="font-semibold text-neutral-800 line-clamp-1">{item.title}</h4>
+                        <div className="flex items-center gap-3 mt-1">
+                          <span className="text-[10px] bg-white border border-neutral-200 px-2 py-0.5 rounded text-neutral-500 uppercase font-bold tracking-wider">{item.category}</span>
+                          <span className="text-[10px] text-neutral-400 flex items-center gap-1 font-medium">
+                            <Clock size={10} /> {new Date(item.created_at).toLocaleDateString()}
+                          </span>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => handleDelete(item.id)}
+                        className="p-2 text-neutral-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         )}
       </div>
@@ -270,19 +228,13 @@ export default function OperaWriter() {
               </button>
             </div>
 
-
             {image && (
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 className="mb-8 rounded-xl overflow-hidden shadow-lg border border-neutral-100"
               >
-                <img 
-                  src={image} 
-                  alt={topic} 
-                  className="w-full aspect-video object-cover"
-                  referrerPolicy="no-referrer"
-                />
+                <img src={image} alt={topic} className="w-full aspect-video object-cover" referrerPolicy="no-referrer" />
               </motion.div>
             )}
 
