@@ -1,13 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import OperaWriter from '../components/OperaWriter';
 import EbookWriter from '../components/EbookWriter';
-import { PenBox, BookOpen, Sparkles, Feather, LogOut, User } from 'lucide-react';
+import { PenBox, BookOpen, Sparkles, Feather, LogOut, User, Rss } from 'lucide-react';
 import { useAuth } from '../AuthContext';
 import Boundary from '../components/Boundary';
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<'opera' | 'ebook'>('opera');
+  const [learnerStatus, setLearnerStatus] = useState<any>(null);
   const { user, logout } = useAuth();
+
+  useEffect(() => {
+    fetch('/api/learning/status')
+      .then(r => r.json())
+      .then(setLearnerStatus)
+      .catch(() => null);
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#fafaf9]">
@@ -46,9 +54,23 @@ export default function Dashboard() {
               </div>
 
               <div className="flex items-center gap-4">
-                <div className="hidden md:flex items-center gap-2 text-neutral-400">
-                  <Sparkles size={16} />
-                  <span className="text-[10px] uppercase tracking-[0.2em] font-bold">Professional Account</span>
+                <div className="hidden md:flex items-center gap-2">
+                  {learnerStatus?.status === 'ready' ? (
+                    <span className="flex items-center gap-1.5 text-green-600 bg-green-50 border border-green-100 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
+                      <Rss size={10} className="animate-pulse" />
+                      AI Learning Active · {learnerStatus.newsSamplesCount} articles
+                    </span>
+                  ) : learnerStatus?.status === 'learning' ? (
+                    <span className="flex items-center gap-1.5 text-orange-500 bg-orange-50 border border-orange-100 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
+                      <Rss size={10} />
+                      AI Learning...
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-1.5 text-neutral-400 text-[10px] font-bold uppercase tracking-[0.2em]">
+                      <Sparkles size={14} />
+                      Professional Account
+                    </span>
+                  )}
                 </div>
                 <div className="flex items-center gap-3 border-l border-neutral-200 pl-4">
                   {user?.photoURL ? (

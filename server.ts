@@ -7,6 +7,7 @@ import cors from "cors";
 import { fileURLToPath } from "url";
 import { createServer as createViteServer } from "vite";
 import { generateContent } from "./backend/services/aiService.js";
+import { initWebLearner, getLearnerStatus } from "./backend/services/webLearner.js";
 import authRoutes from "./backend/routes/authRoutes.js";
 import contentRoutes from "./backend/routes/contentRoutes.js";
 
@@ -40,6 +41,11 @@ async function startServer() {
       apiKeyPresent: !!process.env.GEMINI_API_KEY,
       googleConfigured: !!process.env.GOOGLE_CLIENT_ID
     });
+  });
+
+  // Learning status
+  api.get("/learning/status", (req, res) => {
+    res.json(getLearnerStatus());
   });
 
   // Auth routes
@@ -113,6 +119,7 @@ async function startServer() {
   app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running on http://localhost:${PORT}`);
     console.log(`Mode: ${process.env.NODE_ENV || 'development'}`);
+    initWebLearner();
   });
 }
 

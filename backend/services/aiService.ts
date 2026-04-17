@@ -1,4 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
+import { getLearningContext } from './webLearner.js';
 
 let genAI: GoogleGenAI | null = null;
 
@@ -75,23 +76,25 @@ export async function generateContent(type: 'opera' | 'ebook', params: any) {
   let modelName = "gemini-2.0-flash";
 
   if (type === 'opera') {
+    const learningContext = getLearningContext('opera');
     promptText = `${OPERA_SYSTEM_PROMPT}
-
+${learningContext}
 Now write a professional Opera News Hub article:
 Topic: ${params.topic}
 Category: ${params.category}
-Focus on the "${params.category}" angle. Make it engaging, factual, and mobile-friendly.`;
+Focus on the "${params.category}" angle. Study the real examples above for natural tone and structure — then write something completely original in that same human voice.`;
   } else if (type === 'ebook') {
     modelName = "gemini-2.0-flash";
+    const learningContext = getLearningContext('ebook');
     promptText = `${EBOOK_SYSTEM_PROMPT}
-
+${learningContext}
 Now write a complete eBook manuscript:
 Title: ${params.topic}
 Author: ${params.author}
 Publisher: ${params.publisher}
 Genre: ${params.type === 'story' ? 'Fiction / Story' : 'Educational / Non-Fiction'}
 
-Write the full manuscript with all sections. Make it comprehensive and original.`;
+Study the real examples above for authentic narrative voice — then write something completely original with that same human depth.`;
   }
 
   try {
