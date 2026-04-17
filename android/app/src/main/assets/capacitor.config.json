@@ -1,0 +1,6 @@
+{
+	"appId": "com.All.Hub.app",
+	"appName": "All Hub",
+	"webDir": "dist",
+	"bundledWebRuntime": false
+}

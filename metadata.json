@@ -1,6 +1,6 @@
 {
   "name": "All Hub",
-  "description": "A professional writing and image generation suite for Opera News Hub and specialized E-books.",
+  "description": "Professional AI Content Suite for Nigerian writers. Features a secure Node.js backend for high-quality Opera News Hub articles and structured E-books.",
   "requestFramePermissions": [],
   "majorCapabilities": []
 }

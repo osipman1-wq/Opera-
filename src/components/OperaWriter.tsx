@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { generateOperaArticle, generateArticleImage } from '../services/gemini';
+import { generateOperaArticle } from '../services/gemini';
 import { Loader2, PenLine, CheckCircle2, AlertCircle, Image as ImageIcon, History, Trash2, Clock } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { motion, AnimatePresence } from 'motion/react';
@@ -106,25 +106,13 @@ export default function OperaWriter() {
     setContent('');
     setImage('');
     try {
-      const result = await generateOperaArticle(topic, category);
-      setContent(result || '');
+      const data = await generateOperaArticle(topic, category);
+      setContent(data.content || '');
+      setImage(data.imageUrl || '');
       
-      // Generate image immediately after content
-      let imageUrl = '';
-      setGeneratingImage(true);
-      try {
-        const img = await generateArticleImage(topic, result || '');
-        setImage(img || '');
-        imageUrl = img || '';
-      } catch (imgErr) {
-        console.error('Image generation failed:', imgErr);
-      } finally {
-        setGeneratingImage(false);
-      }
-
-      // Save to Firestore
-      if (result) {
-        await saveToFirestore(result, imageUrl);
+      // Save to Firestore/Local
+      if (data.content) {
+        await saveToFirestore(data.content, data.imageUrl || '');
       }
     } catch (err) {
       setError('Failed to generate article. Please try again.');

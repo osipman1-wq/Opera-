@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">All Hub</string>
+    <string name="title_activity_main">All Hub</string>
+    <string name="package_name">com.All.Hub.app</string>
+    <string name="custom_url_scheme">com.All.Hub.app</string>
+</resources>

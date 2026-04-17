@@ -1,72 +1,34 @@
-// ===============================================================
-// All Hub Security Rules
-// ===============================================================
-
-rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
 
-    // ===============================================================
-    // Helper Functions
-    // ===============================================================
+    // Helper functions
     function isAuthenticated() {
       return request.auth != null;
     }
 
-    function isOwner(userId) {
-      return isAuthenticated() && request.auth.uid == userId;
+    function isOwner(authorUid) {
+      return isAuthenticated() && request.auth.uid == authorUid;
     }
 
-    function isDocOwner() {
-      return isAuthenticated() && request.auth.uid == resource.data.authorUid;
-    }
-
-    function isValidEmail(email) {
-      return email is string && email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
-    }
-
-    function isValidDateString(dateStr) {
-      return dateStr is string && dateStr.matches("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.*Z?$");
-    }
-
-    // ===============================================================
-    // Collection Rules
-    // ===============================================================
-
-    // Users collection
+    // Users: Only owner can access their profile
     match /users/{userId} {
-      allow read: if isOwner(userId);
-      allow write: if isOwner(userId) && 
-        request.resource.data.uid == userId &&
-        (request.resource.data.email == null || isValidEmail(request.resource.data.email));
+      allow read, write: if isAuthenticated() && request.auth.uid == userId;
     }
 
-    // Articles collection
-    match /articles/{articleId} {
-      allow read: if isDocOwner();
-      allow create: if isAuthenticated() && 
-        request.resource.data.authorUid == request.auth.uid &&
-        request.resource.data.content.size() > 0 &&
-        request.resource.data.content.size() < 100000 &&
-        isValidDateString(request.resource.data.createdAt);
-      allow update: if isDocOwner() &&
-        request.resource.data.authorUid == resource.data.authorUid &&
-        isValidDateString(request.resource.data.createdAt);
-      allow delete: if isDocOwner();
+    // Articles/Ebooks: Only owner can CRUD
+    match /articles/{id} {
+      allow read, update, delete: if isAuthenticated() && request.auth.uid == resource.data.authorUid;
+      allow create: if isAuthenticated() && request.auth.uid == request.resource.data.authorUid;
     }
 
-    // Ebooks collection
-    match /ebooks/{ebookId} {
-      allow read: if isDocOwner();
-      allow create: if isAuthenticated() && 
-        request.resource.data.authorUid == request.auth.uid &&
-        request.resource.data.content.size() > 0 &&
-        request.resource.data.content.size() < 500000 &&
-        isValidDateString(request.resource.data.createdAt);
-      allow update: if isDocOwner() &&
-        request.resource.data.authorUid == resource.data.authorUid &&
-        isValidDateString(request.resource.data.createdAt);
-      allow delete: if isDocOwner();
+    match /ebooks/{id} {
+      allow read, update, delete: if isAuthenticated() && request.auth.uid == resource.data.authorUid;
+      allow create: if isAuthenticated() && request.auth.uid == request.resource.data.authorUid;
     }
   }
 }
