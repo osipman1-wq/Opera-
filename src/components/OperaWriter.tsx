@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { generateOperaArticle } from '../services/geminiService';
-import { Loader2, PenLine, CheckCircle2, AlertCircle, Image as ImageIcon, History, Trash2, Clock } from 'lucide-react';
+import { Loader2, PenLine, CheckCircle2, AlertCircle, Image as ImageIcon, History, Trash2, Clock, Copy, Check } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { motion, AnimatePresence } from 'motion/react';
 import { db, handleFirestoreError, OperationType } from '../firebase';
@@ -17,7 +17,7 @@ export default function OperaWriter() {
   const [loading, setLoading] = useState(false);
   const [content, setContent] = useState('');
   const [image, setImage] = useState('');
-  const [generatingImage, setGeneratingImage] = useState(false);
+  const [copied, setCopied] = useState(false);
   const [error, setError] = useState('');
   const [history, setHistory] = useState<any[]>([]);
   const [showHistory, setShowHistory] = useState(false);
@@ -120,6 +120,12 @@ export default function OperaWriter() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(content);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
@@ -256,21 +262,14 @@ export default function OperaWriter() {
                 Opera Hub Compliant
               </span>
               <button
-                onClick={() => {
-                   navigator.clipboard.writeText(content);
-                }}
-                className="text-xs text-neutral-400 hover:text-neutral-900 transition-colors"
+                onClick={handleCopy}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-neutral-100 text-xs font-bold text-neutral-600 hover:bg-neutral-900 hover:text-white transition-all"
               >
-                Copy Markdown
+                {copied ? <Check size={14} /> : <Copy size={14} />}
+                {copied ? 'Copied' : 'Copy Article Body'}
               </button>
             </div>
 
-            {generatingImage && (
-              <div className="aspect-video w-full bg-neutral-100 animate-pulse rounded-xl mb-8 flex flex-col items-center justify-center gap-2 text-neutral-400">
-                <Loader2 className="animate-spin" />
-                <span className="text-xs font-medium uppercase tracking-wider">Generating Supporting Image...</span>
-              </div>
-            )}
 
             {image && (
               <motion.div

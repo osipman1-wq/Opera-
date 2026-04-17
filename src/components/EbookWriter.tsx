@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { generateEbook } from '../services/geminiService';
-import { Loader2, BookOpen, Download, User, Building2, Type, History, Trash2, Clock, AlertCircle } from 'lucide-react';
+import { Loader2, BookOpen, Download, User, Building2, Type, History, Trash2, Clock, AlertCircle, Copy, Check } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { motion, AnimatePresence } from 'motion/react';
 import { db, handleFirestoreError, OperationType } from '../firebase';
@@ -14,6 +14,7 @@ export default function EbookWriter() {
   const [type, setType] = useState<'story' | 'educational'>('story');
   const [loading, setLoading] = useState(false);
   const [content, setContent] = useState('');
+  const [copied, setCopied] = useState(false);
   const [error, setError] = useState('');
   const [history, setHistory] = useState<any[]>([]);
   const [showHistory, setShowHistory] = useState(false);
@@ -112,6 +113,12 @@ export default function EbookWriter() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(content);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
@@ -264,19 +271,28 @@ export default function EbookWriter() {
                     <span className="text-[10px] uppercase font-bold tracking-[0.2em] text-neutral-400">Digital Manuscript</span>
                     <span className="text-xs font-serif italic text-neutral-600">{author}</span>
                   </div>
-                  <button
-                    onClick={() => {
-                      const element = document.createElement("a");
-                      const file = new Blob([content], {type: 'text/plain'});
-                      element.href = URL.createObjectURL(file);
-                      element.download = `${topic.slice(0, 20)}.md`;
-                      document.body.appendChild(element);
-                      element.click();
-                    }}
-                    className="bg-white px-4 py-2 rounded-xl border border-neutral-200 text-[10px] font-bold uppercase tracking-wider hover:bg-neutral-100 transition-all flex items-center gap-2"
-                  >
-                    <Download size={14} /> Export .md
-                  </button>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={handleCopy}
+                      className="bg-white px-4 py-2 rounded-xl border border-neutral-200 text-[10px] font-bold uppercase tracking-wider hover:bg-neutral-100 transition-all flex items-center gap-2"
+                    >
+                      {copied ? <Check size={14} /> : <Copy size={14} />}
+                      {copied ? 'Copied' : 'Copy'}
+                    </button>
+                    <button
+                      onClick={() => {
+                        const element = document.createElement("a");
+                        const file = new Blob([content], {type: 'text/plain'});
+                        element.href = URL.createObjectURL(file);
+                        element.download = `${topic.slice(0, 20)}.md`;
+                        document.body.appendChild(element);
+                        element.click();
+                      }}
+                      className="bg-neutral-900 text-white px-4 py-2 rounded-xl text-[10px] font-bold uppercase tracking-wider hover:bg-neutral-800 transition-all flex items-center gap-2 shadow-lg"
+                    >
+                      <Download size={14} /> Export .md
+                    </button>
+                  </div>
                 </div>
                 <div className="p-12 flex-1 overflow-y-auto custom-scrollbar bg-[url('https://www.transparenttextures.com/patterns/notebook.png')]">
                   <div className="max-w-prose mx-auto">

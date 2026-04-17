@@ -37,7 +37,7 @@ export async function generateOperaArticle(topic: string, category: string) {
 
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash",
+      model: "gemini-3-flash-preview",
       contents: prompt
     });
 
@@ -71,7 +71,7 @@ export async function generateEbook(topic: string, publisher: string, author: st
 
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash", // Using flash for speed, pro if depth is needed
+      model: "gemini-3.1-pro-preview", // Using pro for depth and length
       contents: prompt
     });
 
