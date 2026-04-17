@@ -12,7 +12,7 @@ const __dirname = path.dirname(__filename);
 
 async function startServer() {
   const app = express();
-  const PORT = 3000;
+  const PORT = parseInt(process.env.PORT || "5000", 10);
 
   // 1. GLOBAL TOP-LEVEL MIDDLEWARES
   app.use(cors({ origin: '*' }));
