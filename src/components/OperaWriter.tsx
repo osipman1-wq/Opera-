@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { generateOperaArticle } from '../services/gemini';
+import { generateOperaArticle } from '../services/geminiService';
 import { Loader2, PenLine, CheckCircle2, AlertCircle, Image as ImageIcon, History, Trash2, Clock } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { motion, AnimatePresence } from 'motion/react';

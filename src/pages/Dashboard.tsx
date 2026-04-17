@@ -3,7 +3,7 @@ import OperaWriter from '../components/OperaWriter';
 import EbookWriter from '../components/EbookWriter';
 import { PenBox, BookOpen, Sparkles, Feather, LogOut, User, UserCircle } from 'lucide-react';
 import { useAuth } from '../AuthContext';
-import { ErrorBoundary } from '../components/ErrorBoundary';
+import Boundary from '../components/Boundary';
 
 function AdPlaceholder() {
   return (
@@ -29,7 +29,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-[#fafaf9]">
-      <ErrorBoundary>
+      <Boundary>
         {/* Header */}
         <nav className="bg-white border-b border-neutral-200 sticky top-0 z-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -156,7 +156,7 @@ export default function Dashboard() {
             </p>
           </div>
         </footer>
-      </ErrorBoundary>
+      </Boundary>
     </div>
   );
 }

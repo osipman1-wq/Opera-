@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Feather } from 'lucide-react';
 import { AuthProvider, useAuth } from './AuthContext';
-import { ErrorBoundary } from './components/ErrorBoundary';
+import Boundary from './components/Boundary';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 
@@ -31,12 +31,20 @@ function AppContent() {
 }
 
 export default function App() {
+  useEffect(() => {
+    // Diagnostic Ping
+    fetch("/api/health")
+      .then(r => r.json())
+      .then(d => console.log("[App] Backend ping success:", d))
+      .catch(e => console.error("[App] Backend ping failed:", e));
+  }, []);
+
   return (
-    <ErrorBoundary>
+    <Boundary>
       <AuthProvider>
         <AppContent />
       </AuthProvider>
-    </ErrorBoundary>
+    </Boundary>
   );
 }
 
