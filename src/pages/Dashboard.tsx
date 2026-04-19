@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import OperaWriter from '../components/OperaWriter';
 import EbookWriter from '../components/EbookWriter';
+import AdBanner from '../components/AdBanner';
 import { PenBox, BookOpen, Sparkles, Feather, LogOut, User, Rss } from 'lucide-react';
 import { useAuth } from '../AuthContext';
 import Boundary from '../components/Boundary';
@@ -117,13 +118,25 @@ export default function Dashboard() {
           </div>
         </nav>
 
+        <div className="w-full bg-white border-b border-neutral-100 py-2 px-4">
+          <div className="max-w-7xl mx-auto">
+            <AdBanner format="horizontal" label="Sponsored" />
+          </div>
+        </div>
+
         <main className="py-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {activeTab === 'opera' ? <OperaWriter /> : <EbookWriter />}
           </div>
         </main>
 
-        <footer className="py-12 border-t border-neutral-200 bg-white">
+        <div className="w-full bg-neutral-50 border-t border-neutral-100 py-4 px-4">
+          <div className="max-w-3xl mx-auto">
+            <AdBanner format="rectangle" label="Advertisement" />
+          </div>
+        </div>
+
+        <footer className="py-10 border-t border-neutral-200 bg-white">
           <div className="max-w-7xl mx-auto px-4 text-center">
             <p className="text-neutral-400 text-[10px] font-bold uppercase tracking-[0.3em] flex items-center justify-center gap-3">
               Powered by All Hub <Sparkles size={12} className="text-neutral-300" /> AI Writing Suite
