@@ -7,7 +7,7 @@ interface AdBannerProps {
   label?: string;
 }
 
-const AD_CLIENT = 'ca-app-pub-7630905345973270';
+const AD_CLIENT = 'ca-pub-7630905345973270';
 const DEFAULT_SLOT = '6585884409';
 
 declare global {
