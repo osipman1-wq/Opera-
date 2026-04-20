@@ -62,16 +62,9 @@ async function startServer() {
         return res.status(400).json({ error: "Missing type or params" });
       }
 
-      const content = await generateContent(type, params);
+      const result = await generateContent(type, params);
 
-      if (type === 'opera') {
-        return res.json({
-          content,
-          imageUrl: `https://picsum.photos/seed/${encodeURIComponent(params.topic)}/800/450`
-        });
-      }
-
-      return res.json({ content });
+      return res.json(result);
     } catch (error: any) {
       console.error("[API /generate] Error:", error);
       return res.status(500).json({ error: "Generation failed", message: error.message });

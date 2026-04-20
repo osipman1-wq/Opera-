@@ -3,13 +3,17 @@ import { getLearningContext } from './webLearner.js';
 
 let genAI: GoogleGenAI | null = null;
 
+function getApiKey(): string {
+  const rawApiKey = process.env.GEMINI_API_KEY;
+  if (!rawApiKey || rawApiKey.trim() === '') {
+    throw new Error("GEMINI_API_KEY environment variable is missing on the server.");
+  }
+  return rawApiKey.trim();
+}
+
 function getGenAI() {
   if (!genAI) {
-    const rawApiKey = process.env.GEMINI_API_KEY;
-    if (!rawApiKey || rawApiKey.trim() === '') {
-      throw new Error("GEMINI_API_KEY environment variable is missing on the server.");
-    }
-    genAI = new GoogleGenAI({ apiKey: rawApiKey.trim() });
+    genAI = new GoogleGenAI({ apiKey: getApiKey() });
   }
   return genAI;
 }
@@ -69,11 +73,80 @@ STRUCTURE TO FOLLOW:
 6. Conclusion
 7. About the Author`;
 
-export async function generateContent(type: 'opera' | 'ebook', params: any) {
+const TEXT_MODELS = [
+  'gemini-2.5-flash',
+  'gemini-2.5-pro',
+  'gemini-2.5-flash-lite',
+  'gemini-flash-latest',
+  'gemini-pro-latest',
+  'gemini-2.0-flash',
+  'gemini-2.0-flash-lite',
+];
+
+const IMAGE_MODELS = [
+  'gemini-2.5-flash-image',
+  'gemini-3.1-flash-image-preview',
+  'gemini-3-pro-image-preview',
+];
+
+async function generateArticleImage(topic: string, category: string): Promise<string> {
   const ai = getGenAI();
-  
+  const imagePrompt = `Professional editorial photograph for a Nigerian news article. Topic: "${topic}". Category: ${category}. Style: clean, realistic, high-quality news photography. Bright, well-lit. No text overlays or watermarks.`;
+
+  for (const model of IMAGE_MODELS) {
+    try {
+      console.log(`[aiService] Trying image model: ${model}`);
+      const response = await ai.models.generateContent({
+        model,
+        contents: imagePrompt,
+        config: {
+          responseModalities: ['IMAGE'],
+        } as any,
+      });
+
+      const candidates = (response as any).candidates;
+      if (candidates?.[0]?.content?.parts) {
+        for (const part of candidates[0].content.parts) {
+          if (part.inlineData?.data) {
+            console.log(`[aiService] Image generated with model: ${model}`);
+            return `data:${part.inlineData.mimeType || 'image/jpeg'};base64,${part.inlineData.data}`;
+          }
+        }
+      }
+    } catch (err: any) {
+      console.warn(`[aiService] Image model ${model} failed: ${err.message?.slice(0, 100)}`);
+    }
+  }
+
+  console.warn('[aiService] All image models failed, using stock photo fallback');
+  return `https://picsum.photos/seed/${encodeURIComponent(topic)}/800/450`;
+}
+
+async function generateWithFallback(promptText: string): Promise<string> {
+  let lastError: Error | null = null;
+  const ai = getGenAI();
+
+  for (const model of TEXT_MODELS) {
+    try {
+      console.log(`[aiService] Trying text model: ${model}`);
+      const response = await ai.models.generateContent({
+        model,
+        contents: promptText,
+      });
+      const text = response.text || "";
+      if (!text) throw new Error("AI returned empty response");
+      console.log(`[aiService] Success with model: ${model}`);
+      return text;
+    } catch (err: any) {
+      console.warn(`[aiService] Model ${model} failed: ${err.message?.slice(0, 120)}`);
+      lastError = err;
+    }
+  }
+  throw lastError || new Error("All AI models exhausted. Please check your Gemini API key quota at https://aistudio.google.com");
+}
+
+export async function generateContent(type: 'opera' | 'ebook', params: any): Promise<{ content: string; imageUrl?: string }> {
   let promptText = "";
-  let modelName = "gemini-2.0-flash";
 
   if (type === 'opera') {
     const learningContext = getLearningContext('opera');
@@ -84,7 +157,6 @@ Topic: ${params.topic}
 Category: ${params.category}
 Focus on the "${params.category}" angle. Study the real examples above for natural tone and structure — then write something completely original in that same human voice.`;
   } else if (type === 'ebook') {
-    modelName = "gemini-2.0-flash";
     const learningContext = getLearningContext('ebook');
     promptText = `${EBOOK_SYSTEM_PROMPT}
 ${learningContext}
@@ -98,17 +170,15 @@ Study the real examples above for authentic narrative voice — then write somet
   }
 
   try {
-    const response = await ai.models.generateContent({
-      model: modelName,
-      contents: promptText
-    });
+    const text = await generateWithFallback(promptText);
+    const content = sanitizeOutput(text);
 
-    const text = response.text || "";
-    if (!text) {
-      throw new Error("AI returned empty response");
+    if (type === 'opera') {
+      const imageUrl = await generateArticleImage(params.topic, params.category);
+      return { content, imageUrl };
     }
-    
-    return sanitizeOutput(text);
+
+    return { content };
   } catch (error: any) {
     console.error(`[aiService] ${type.toUpperCase()} Generation Failed:`, error);
     throw new Error(`AI Service Error (${type}): ${error.message || "Unknown error"}`);
