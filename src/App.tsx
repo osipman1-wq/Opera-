@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Feather } from 'lucide-react';
 import { AuthProvider, useAuth } from './AuthContext';
 import Boundary from './components/Boundary';
@@ -31,8 +31,10 @@ function AppContent() {
 }
 
 export default function App() {
+  const pinged = useRef(false);
   useEffect(() => {
-    // Diagnostic Ping
+    if (pinged.current) return;
+    pinged.current = true;
     fetch("/api/health")
       .then(r => r.json())
       .then(d => console.log("[App] Backend ping success:", d))
