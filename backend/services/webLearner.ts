@@ -27,6 +27,11 @@ const NEWS_FEEDS = [
   { url: 'https://businessday.ng/feed/', source: 'BusinessDay', category: 'Finance/Business' },
   { url: 'https://techcabal.com/feed/', source: 'TechCabal', category: 'Technology' },
   { url: 'https://www.pulse.ng/entertainment/feed', source: 'Pulse Nigeria', category: 'Entertainment/Lifestyle' },
+  { url: 'https://news.google.com/rss/search?q=Nigeria&hl=en-NG&gl=NG&ceid=NG:en', source: 'Google News Nigeria', category: 'News' },
+  { url: 'https://news.google.com/rss/search?q=Nigeria+education+business&hl=en-NG&gl=NG&ceid=NG:en', source: 'Google News Nigeria (Education/Business)', category: 'Education/Business' },
+  { url: 'https://news.google.com/rss/search?q=Nigeria+technology+startup&hl=en-NG&gl=NG&ceid=NG:en', source: 'Google News Nigeria (Tech)', category: 'Technology' },
+  { url: 'https://www.channelstv.com/feed/', source: 'Channels TV', category: 'News' },
+  { url: 'https://www.thecable.ng/feed', source: 'The Cable Nigeria', category: 'News/Opinion' },
 ];
 
 const STORY_FEEDS = [
