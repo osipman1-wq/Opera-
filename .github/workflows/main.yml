@@ -9,29 +9,38 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Checkout repo
       - name: Checkout
         uses: actions/checkout@v4
 
+      # 2. Setup Node
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 18
 
+      # 3. Clean install (fix Tailwind oxide issue)
       - name: Install dependencies
-        run: npm install
+        run: |
+          rm -rf node_modules package-lock.json
+          npm install --no-optional
 
+      # 4. Build frontend (Vite)
       - name: Build web app
         run: npm run build
 
+      # 5. Sync Capacitor
       - name: Sync Capacitor
         run: npx cap copy
 
+      # 6. Build APK using Gradle
       - name: Build APK
         run: |
           cd android
           chmod +x gradlew
           ./gradlew assembleDebug
 
+      # 7. Upload APK
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
