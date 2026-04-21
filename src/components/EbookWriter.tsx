@@ -32,7 +32,10 @@ export default function EbookWriter() {
   useEffect(() => {
     if (!token) return;
     fetch('/api/content/ebooks', { headers: authHeaders })
-      .then(r => r.json())
+      .then(r => {
+        if (!r.ok || !r.headers.get('content-type')?.includes('application/json')) return [];
+        return r.json();
+      })
       .then(data => Array.isArray(data) ? setHistory(data) : null)
       .catch(() => null);
   }, [token]);

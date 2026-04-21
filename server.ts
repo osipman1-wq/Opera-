@@ -99,8 +99,8 @@ async function startServer() {
 
   // 5. GLOBAL ERROR HANDLER
   app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-    console.error(`[Fatal Error] ${req.method} ${req.url}:`, err);
-    if (req.url.startsWith("/api") || req.xhr) {
+    console.error(`[Fatal Error] ${req.method} ${req.originalUrl}:`, err);
+    if (req.originalUrl.startsWith("/api") || req.xhr) {
       return res.status(err.status || 500).json({
         error: "Server Error",
         message: err.message || "An unexpected error occurred.",

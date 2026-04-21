@@ -19,55 +19,79 @@ function requireAuth(req: Request, res: Response, next: NextFunction) {
 }
 
 router.get('/articles', requireAuth, async (req: Request, res: Response) => {
-  const uid = (req as any).userUid;
-  const result = await pool.query(
-    'SELECT id, title, topic, category, content, image_url, created_at FROM articles WHERE user_uid = $1 ORDER BY created_at DESC',
-    [uid]
-  );
-  return res.json(result.rows);
+  try {
+    const uid = (req as any).userUid;
+    const result = await pool.query(
+      'SELECT id, title, topic, category, content, image_url, created_at FROM articles WHERE user_uid = $1 ORDER BY created_at DESC',
+      [uid]
+    );
+    return res.json(result.rows);
+  } catch (err: any) {
+    return res.status(500).json({ error: 'Failed to load articles.', message: err.message });
+  }
 });
 
 router.post('/articles', requireAuth, async (req: Request, res: Response) => {
-  const uid = (req as any).userUid;
-  const { title, topic, category, content, imageUrl } = req.body;
-  const result = await pool.query(
-    'INSERT INTO articles (user_uid, title, topic, category, content, image_url) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-    [uid, title, topic, category, content, imageUrl]
-  );
-  return res.json(result.rows[0]);
+  try {
+    const uid = (req as any).userUid;
+    const { title, topic, category, content, imageUrl } = req.body;
+    const result = await pool.query(
+      'INSERT INTO articles (user_uid, title, topic, category, content, image_url) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+      [uid, title, topic, category, content, imageUrl]
+    );
+    return res.json(result.rows[0]);
+  } catch (err: any) {
+    return res.status(500).json({ error: 'Failed to save article.', message: err.message });
+  }
 });
 
 router.delete('/articles/:id', requireAuth, async (req: Request, res: Response) => {
-  const uid = (req as any).userUid;
-  const { id } = req.params;
-  await pool.query('DELETE FROM articles WHERE id = $1 AND user_uid = $2', [id, uid]);
-  return res.json({ success: true });
+  try {
+    const uid = (req as any).userUid;
+    const { id } = req.params;
+    await pool.query('DELETE FROM articles WHERE id = $1 AND user_uid = $2', [id, uid]);
+    return res.json({ success: true });
+  } catch (err: any) {
+    return res.status(500).json({ error: 'Failed to delete article.', message: err.message });
+  }
 });
 
 router.get('/ebooks', requireAuth, async (req: Request, res: Response) => {
-  const uid = (req as any).userUid;
-  const result = await pool.query(
-    'SELECT id, title, author_name, publisher, type, content, created_at FROM ebooks WHERE user_uid = $1 ORDER BY created_at DESC',
-    [uid]
-  );
-  return res.json(result.rows);
+  try {
+    const uid = (req as any).userUid;
+    const result = await pool.query(
+      'SELECT id, title, author_name, publisher, type, content, created_at FROM ebooks WHERE user_uid = $1 ORDER BY created_at DESC',
+      [uid]
+    );
+    return res.json(result.rows);
+  } catch (err: any) {
+    return res.status(500).json({ error: 'Failed to load ebooks.', message: err.message });
+  }
 });
 
 router.post('/ebooks', requireAuth, async (req: Request, res: Response) => {
-  const uid = (req as any).userUid;
-  const { title, authorName, publisher, type, content } = req.body;
-  const result = await pool.query(
-    'INSERT INTO ebooks (user_uid, title, author_name, publisher, type, content) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-    [uid, title, authorName, publisher, type, content]
-  );
-  return res.json(result.rows[0]);
+  try {
+    const uid = (req as any).userUid;
+    const { title, authorName, publisher, type, content } = req.body;
+    const result = await pool.query(
+      'INSERT INTO ebooks (user_uid, title, author_name, publisher, type, content) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+      [uid, title, authorName, publisher, type, content]
+    );
+    return res.json(result.rows[0]);
+  } catch (err: any) {
+    return res.status(500).json({ error: 'Failed to save ebook.', message: err.message });
+  }
 });
 
 router.delete('/ebooks/:id', requireAuth, async (req: Request, res: Response) => {
-  const uid = (req as any).userUid;
-  const { id } = req.params;
-  await pool.query('DELETE FROM ebooks WHERE id = $1 AND user_uid = $2', [id, uid]);
-  return res.json({ success: true });
+  try {
+    const uid = (req as any).userUid;
+    const { id } = req.params;
+    await pool.query('DELETE FROM ebooks WHERE id = $1 AND user_uid = $2', [id, uid]);
+    return res.json({ success: true });
+  } catch (err: any) {
+    return res.status(500).json({ error: 'Failed to delete ebook.', message: err.message });
+  }
 });
 
 export default router;
