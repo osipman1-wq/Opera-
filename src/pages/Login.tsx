@@ -48,8 +48,7 @@ export default function Login() {
     window.google.accounts.id.prompt();
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const doAuth = async () => {
     setLoading(true);
     clearError();
     try {
@@ -60,6 +59,11 @@ export default function Login() {
       }
     } catch {}
     setLoading(false);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await doAuth();
   };
 
   return (
@@ -77,9 +81,19 @@ export default function Login() {
         </p>
 
         {authError && (
-          <div className="mb-6 p-4 bg-red-50 text-red-600 rounded-2xl text-[11px] font-bold flex items-center justify-between border border-red-100">
-            <span className="flex-1">{authError}</span>
-            <button onClick={clearError} className="ml-2 hover:underline text-xs shrink-0">Dismiss</button>
+          <div className="mb-6 p-4 bg-red-50 text-red-600 rounded-2xl text-[11px] font-bold flex items-center justify-between gap-2 border border-red-100">
+            <span className="flex-1 leading-relaxed">{authError}</span>
+            <div className="flex gap-2 shrink-0">
+              {authError.toLowerCase().includes('starting up') || authError.toLowerCase().includes('server') ? (
+                <button
+                  onClick={doAuth}
+                  className="bg-red-600 text-white px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider hover:bg-red-700 transition-all"
+                >
+                  Retry
+                </button>
+              ) : null}
+              <button onClick={clearError} className="hover:underline text-xs">Dismiss</button>
+            </div>
           </div>
         )}
 
@@ -134,7 +148,7 @@ export default function Login() {
             disabled={loading}
             className="w-full bg-neutral-900 text-white py-4 rounded-2xl font-bold text-sm hover:bg-neutral-800 transition-all shadow-xl disabled:opacity-50"
           >
-            {loading ? 'Please wait...' : mode === 'signin' ? 'Sign In' : 'Create Account'}
+            {loading ? 'Connecting…' : mode === 'signin' ? 'Sign In' : 'Create Account'}
           </button>
         </form>
 

@@ -27,8 +27,8 @@ export const useAuth = () => {
   return ctx;
 };
 
-async function apiFetch(path: string, options?: RequestInit, retries = 3): Promise<any> {
-  for (let attempt = 1; attempt <= retries; attempt++) {
+async function apiFetch(path: string, options?: RequestInit, maxRetries = 6): Promise<any> {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       const res = await fetch(path, {
         ...options,
@@ -37,31 +37,33 @@ async function apiFetch(path: string, options?: RequestInit, retries = 3): Promi
 
       const contentType = res.headers.get('content-type') || '';
 
-      // Transient server/proxy errors — retry automatically
-      if ((res.status === 404 || res.status === 502 || res.status === 503) && attempt < retries) {
-        await new Promise(r => setTimeout(r, 800 * attempt));
-        continue;
-      }
-
+      // Non-JSON response = proxy/infra not ready yet — always retry
       if (!contentType.includes('application/json')) {
-        const text = await res.text();
-        const clean = text.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim().slice(0, 100);
-        throw new Error(`Server unreachable (${res.status}). Please refresh and try again.`);
+        if (attempt < maxRetries) {
+          await new Promise(r => setTimeout(r, 1200 * attempt));
+          continue;
+        }
+        throw new Error('Server is still starting up. Please wait a moment and try again.');
       }
 
       const data = await res.json();
+      // App-level errors (wrong password, duplicate email, etc.) — throw immediately, no retry
       if (!res.ok) throw new Error(data.error || data.message || `Request failed (${res.status})`);
       return data;
 
     } catch (err: any) {
-      const isNetworkError = err.name === 'TypeError' || err.message === 'Failed to fetch';
-      if (isNetworkError && attempt < retries) {
-        await new Promise(r => setTimeout(r, 800 * attempt));
+      // Re-throw app errors immediately (they're not retryable)
+      if (err.message && !err.message.includes('starting up') && err.name !== 'TypeError') throw err;
+
+      const isNetworkError = err.name === 'TypeError';
+      if ((isNetworkError || err.message?.includes('starting up')) && attempt < maxRetries) {
+        await new Promise(r => setTimeout(r, 1200 * attempt));
         continue;
       }
-      throw err;
+      throw new Error('Could not reach the server. Please refresh and try again.');
     }
   }
+  throw new Error('Could not reach the server. Please refresh and try again.');
 }
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
