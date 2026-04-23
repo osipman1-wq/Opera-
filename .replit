@@ -1,4 +1,4 @@
-modules = ["nodejs-20", "java-graalvm22.3", "web", "postgresql-16"]
+modules = ["nodejs-20", "web", "java-graalvm22.3"]
 [agent]
 expertMode = true
 
