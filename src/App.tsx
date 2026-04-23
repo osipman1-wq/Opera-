@@ -48,10 +48,11 @@ function LoadingScreen({ message }: { message: string }) {
 }
 
 function AppContent() {
-  const { user, loading } = useAuth();
+  const { loading } = useAuth();
+  const [showLogin, setShowLogin] = useState(false);
   if (loading) return <LoadingScreen message="Initializing Hub..." />;
-  if (!user) return <Login />;
-  return <Dashboard />;
+  if (showLogin) return <Login onBack={() => setShowLogin(false)} />;
+  return <Dashboard onShowLogin={() => setShowLogin(true)} />;
 }
 
 export default function App() {
