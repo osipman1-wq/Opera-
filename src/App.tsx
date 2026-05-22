@@ -1,9 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Feather } from 'lucide-react';
-import { AuthProvider, useAuth } from './AuthContext';
+import { AuthProvider } from './AuthContext';
 import Boundary from './components/Boundary';
 import Dashboard from './pages/Dashboard';
-import Login from './pages/Login';
 
 async function pingServer(timeoutMs = 4000): Promise<boolean> {
   try {
@@ -21,14 +20,11 @@ async function pingServer(timeoutMs = 4000): Promise<boolean> {
 }
 
 async function waitForServer(): Promise<void> {
-  // Try up to 10 times with short delays — but always proceed after that.
-  // Never block the user indefinitely.
   for (let i = 0; i < 10; i++) {
     const ok = await pingServer(3000);
     if (ok) return;
     await new Promise(r => setTimeout(r, 1500));
   }
-  // Server might be slow but proceed anyway — individual calls have retry logic.
   console.warn('[App] Server health check timed out — proceeding anyway.');
 }
 
@@ -45,13 +41,6 @@ function LoadingScreen({ message }: { message: string }) {
       </div>
     </div>
   );
-}
-
-function AppContent() {
-  const { user, loading } = useAuth();
-  if (loading) return <LoadingScreen message="Initializing Hub..." />;
-  if (!user) return <Login />;
-  return <Dashboard />;
 }
 
 export default function App() {
@@ -73,7 +62,7 @@ export default function App() {
   return (
     <Boundary>
       <AuthProvider>
-        <AppContent />
+        <Dashboard />
       </AuthProvider>
     </Boundary>
   );

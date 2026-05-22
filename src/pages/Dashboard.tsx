@@ -2,13 +2,15 @@ import React, { useState, useEffect } from 'react';
 import OperaWriter from '../components/OperaWriter';
 import EbookWriter from '../components/EbookWriter';
 import AdBanner from '../components/AdBanner';
-import { PenBox, BookOpen, Sparkles, Feather, LogOut, User, Rss } from 'lucide-react';
+import Login from './Login';
+import { PenBox, BookOpen, Sparkles, Feather, LogOut, User, Rss, X } from 'lucide-react';
 import { useAuth } from '../AuthContext';
 import Boundary from '../components/Boundary';
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<'opera' | 'ebook'>('opera');
   const [learnerStatus, setLearnerStatus] = useState<any>(null);
+  const [showLogin, setShowLogin] = useState(false);
   const { user, logout } = useAuth();
 
   useEffect(() => {
@@ -73,25 +75,34 @@ export default function Dashboard() {
                     </span>
                   )}
                 </div>
-                <div className="flex items-center gap-3 border-l border-neutral-200 pl-4">
-                  {user?.photoURL ? (
-                    <img src={user.photoURL} alt="Profile" className="w-8 h-8 rounded-full border border-neutral-200 object-cover" />
-                  ) : (
-                    <div className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center">
-                      <User size={16} className="text-neutral-400" />
-                    </div>
-                  )}
-                  <span className="hidden md:block text-xs font-semibold text-neutral-600 max-w-[120px] truncate">
-                    {user?.displayName || user?.email}
-                  </span>
+                {user ? (
+                  <div className="flex items-center gap-3 border-l border-neutral-200 pl-4">
+                    {user.photoURL ? (
+                      <img src={user.photoURL} alt="Profile" className="w-8 h-8 rounded-full border border-neutral-200 object-cover" />
+                    ) : (
+                      <div className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center">
+                        <User size={16} className="text-neutral-400" />
+                      </div>
+                    )}
+                    <span className="hidden md:block text-xs font-semibold text-neutral-600 max-w-[120px] truncate">
+                      {user.displayName || user.email}
+                    </span>
+                    <button
+                      onClick={logout}
+                      className="p-2 text-neutral-400 hover:text-neutral-900 transition-colors"
+                      title="Log Out"
+                    >
+                      <LogOut size={20} />
+                    </button>
+                  </div>
+                ) : (
                   <button
-                    onClick={logout}
-                    className="p-2 text-neutral-400 hover:text-neutral-900 transition-colors"
-                    title="Log Out"
+                    onClick={() => setShowLogin(true)}
+                    className="text-xs font-bold text-neutral-900 bg-white border border-neutral-200 px-3 py-2 rounded-xl hover:bg-neutral-50 transition-all shadow-sm"
                   >
-                    <LogOut size={20} />
+                    Sign In
                   </button>
-                </div>
+                )}
               </div>
             </div>
 
@@ -144,6 +155,20 @@ export default function Dashboard() {
           </div>
         </footer>
       </Boundary>
+
+      {showLogin && (
+        <div className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm flex items-start justify-center overflow-y-auto pt-10 pb-10">
+          <div className="relative w-full max-w-md mx-4">
+            <button
+              onClick={() => setShowLogin(false)}
+              className="absolute -top-3 -right-3 z-10 bg-white text-neutral-900 rounded-full p-2 shadow-lg hover:bg-neutral-50 transition-all border border-neutral-100"
+            >
+              <X size={16} />
+            </button>
+            <Login onSuccess={() => setShowLogin(false)} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

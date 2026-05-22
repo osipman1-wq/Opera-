@@ -10,7 +10,7 @@ declare global {
 
 const GOOGLE_CLIENT_ID = (import.meta as any).env.VITE_GOOGLE_CLIENT_ID || '';
 
-export default function Login() {
+export default function Login({ onSuccess }: { onSuccess?: () => void }) {
   const [mode, setMode] = useState<'signin' | 'signup'>('signin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -19,7 +19,13 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [googleReady, setGoogleReady] = useState(false);
 
-  const { loginWithEmail, signUp, loginWithGoogle, authError, clearError } = useAuth();
+  const { loginWithEmail, signUp, loginWithGoogle, authError, clearError, user } = useAuth();
+
+  useEffect(() => {
+    if (user && onSuccess) {
+      onSuccess();
+    }
+  }, [user]);
 
   useEffect(() => {
     if (!GOOGLE_CLIENT_ID) return;
@@ -67,7 +73,7 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-neutral-50 p-6">
+    <div className="flex flex-col items-center justify-center bg-neutral-50 p-6 rounded-[32px]">
       <div className="max-w-md w-full bg-white p-10 rounded-[32px] shadow-2xl border border-neutral-100">
         <div className="bg-neutral-900 w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg rotate-3 hover:rotate-0 transition-transform cursor-default">
           <Feather className="text-white" size={28} />
