@@ -17,7 +17,6 @@ async function initAdMob() {
   if (!Capacitor.isNativePlatform()) return;
   try {
     await AdMob.initialize({
-      requestTrackingAuthorization: true,
       testingDevices: [],
       initializeForTesting: false,
     });

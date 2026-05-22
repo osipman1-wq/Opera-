@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Feather, Mail, Lock, User, Chrome, Eye, EyeOff } from 'lucide-react';
+import { Feather, Mail, Lock, User, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../AuthContext';
 
 declare global {
