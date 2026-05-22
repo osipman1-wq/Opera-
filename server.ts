@@ -6,7 +6,7 @@ import path from "path";
 import cors from "cors";
 import { fileURLToPath } from "url";
 import { createServer as createViteServer } from "vite";
-import { generateContent } from "./backend/services/aiService.js";
+import { generateContent, generateOperaJson } from "./backend/services/aiService.js";
 import { initWebLearner, getLearnerStatus } from "./backend/services/webLearner.js";
 import authRoutes from "./backend/routes/authRoutes.js";
 import contentRoutes from "./backend/routes/contentRoutes.js";
@@ -54,6 +54,22 @@ async function startServer() {
   // Content CRUD routes
   api.use("/content", contentRoutes);
 
+  // Single-pass JSON article generator — returns headline, body, image prompt in <15s
+  api.post("/generate-v2", async (req, res) => {
+    try {
+      const { topic, category } = req.body;
+      if (!topic || !category) {
+        return res.status(400).json({ error: "Missing topic or category" });
+      }
+
+      const result = await generateOperaJson({ topic, category });
+      return res.json(result);
+    } catch (error: any) {
+      console.error("[API /generate-v2] Error:", error);
+      return res.status(500).json({ error: "Generation failed", message: error.message });
+    }
+  });
+
   // Generate content via Gemini (backend only)
   api.post("/generate", async (req, res) => {
     try {
@@ -71,7 +87,7 @@ async function startServer() {
     }
   });
 
-  // Strict API 404
+  // Strict API 404 — must be LAST inside api router
   api.all("*", (req, res) => {
     console.warn(`[API 404] ${req.method} ${req.originalUrl}`);
     res.status(404).json({ error: "API Route Not Found" });

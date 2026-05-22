@@ -119,6 +119,8 @@ export default function OperaWriter() {
   const [loading, setLoading] = useState(false);
   const [content, setContent] = useState('');
   const [image, setImage] = useState('');
+  const [headline, setHeadline] = useState('');
+  const [imgPrompt, setImgPrompt] = useState('');
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState('');
   const [history, setHistory] = useState<Article[]>([]);
@@ -163,10 +165,14 @@ export default function OperaWriter() {
     setError('');
     setContent('');
     setImage('');
+    setHeadline('');
+    setImgPrompt('');
     try {
       const data = await generateOperaArticle(topic, category);
       setContent(data.content || '');
       setImage(data.imageUrl || '');
+      setHeadline(data.headline || '');
+      setImgPrompt(data.image_generation_prompt || '');
       if (data.content) await saveArticle(data.content, data.imageUrl || '');
     } catch (err: any) {
       setError(err.message || 'Failed to generate article. Please try again.');
@@ -331,6 +337,14 @@ export default function OperaWriter() {
               </button>
             </div>
 
+            {/* Meta fields */}
+            {headline && (
+              <div className="px-6 sm:px-10 pt-6 pb-2 border-b border-neutral-100">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-orange-600 mb-1">AI Headline</p>
+                <p className="text-sm font-bold text-neutral-900">{headline}</p>
+              </div>
+            )}
+
             {/* Article body */}
             <div className="p-6 sm:p-10">
               <ArticleViewer
@@ -340,6 +354,22 @@ export default function OperaWriter() {
                 category={category}
               />
             </div>
+
+            {/* Image prompt */}
+            {imgPrompt && (
+              <div className="px-6 sm:px-10 pb-6">
+                <div className="bg-neutral-50 border border-neutral-100 rounded-xl p-4">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-neutral-400 mb-2">Image Generation Prompt</p>
+                  <p className="text-xs text-neutral-600 leading-relaxed">{imgPrompt}</p>
+                  <button
+                    onClick={() => { navigator.clipboard.writeText(imgPrompt); }}
+                    className="mt-2 flex items-center gap-1.5 text-[10px] font-bold text-orange-600 hover:text-orange-700 transition-colors"
+                  >
+                    <Copy size={11} /> Copy Prompt
+                  </button>
+                </div>
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>

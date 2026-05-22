@@ -28,14 +28,22 @@ async function safePost(url: string, body: object): Promise<any> {
   return response.json();
 }
 
-export const generateOperaArticle = async (topic: string, category: string) => {
+export const generateOperaArticle = async (topic: string, category: string): Promise<{
+  content: string;
+  imageUrl: string;
+  headline?: string;
+  image_generation_prompt?: string;
+}> => {
   try {
-    console.log(`[aiClient] Generating opera article: "${topic}" [${category}]`);
-    const data = await safePost("/api/generate", {
-      type: 'opera',
-      params: { topic, category },
-    });
-    return data;
+    console.log(`[aiClient] Generating opera article (v2): "${topic}" [${category}]`);
+    const data = await safePost("/api/generate-v2", { topic, category });
+    // Wrap the JSON response back into the old {content, imageUrl} shape for compatibility
+    return {
+      content: data.article_body,
+      imageUrl: data.imageUrl,
+      headline: data.headline,
+      image_generation_prompt: data.image_generation_prompt,
+    };
   } catch (error: any) {
     if (error.name === 'TypeError') {
       throw new Error("Could not reach the server. Please wait a moment and try again.");

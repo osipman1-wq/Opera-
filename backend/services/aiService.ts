@@ -200,37 +200,94 @@ async function callModel(promptText: string): Promise<string> {
   throw lastError || new Error("All AI models exhausted. Please check your Gemini API key quota at https://aistudio.google.com");
 }
 
-export async function generateContent(type: 'opera' | 'ebook', params: any): Promise<{ content: string; imageUrl?: string }> {
-  let firstPassPrompt = "";
+/**
+ * Parse Gemini JSON output. Strips markdown wrappers and falls back to regex extraction.
+ */
+function parseGeminiJson(raw: string): any {
+  let text = raw.trim();
+  text = text.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```\s*$/i, '');
+  try {
+    return JSON.parse(text);
+  } catch {
+    const match = text.match(/\{[\s\S]*\}/);
+    if (match) return JSON.parse(match[0]);
+    throw new Error('AI returned invalid JSON');
+  }
+}
 
-  if (type === 'opera') {
-    const learningContext = getLearningContext('opera');
-    firstPassPrompt = `${OPERA_SYSTEM_PROMPT}
+/**
+ * SINGLE-PASS Opera article generation — returns strict JSON with headline, body, image prompt.
+ * Targets <15 seconds by skipping the second review pass and image model calls.
+ */
+export async function generateOperaJson(params: any): Promise<{
+  headline: string;
+  article_body: string;
+  image_generation_prompt: string;
+  imageUrl: string;
+}> {
+  const learningContext = getLearningContext('opera');
+
+  const prompt = `${OPERA_SYSTEM_PROMPT}
 ${learningContext}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-YOUR ASSIGNMENT
+YOUR ASSIGNMENT — STRICT JSON OUTPUT
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Write a tight, highly engaging Opera News Hub article on this topic.
+You are the "All Hub" content engine. Process this request and return ONLY a JSON object.
 
 Topic: ${params.topic}
 Category: ${params.category}
 
-Instructions:
-- Study the real Nigerian news examples above — absorb their natural rhythm and tone
-- Write something COMPLETELY ORIGINAL in that same human voice
-- DO NOT copy a single phrase from the examples
-- **Word count: strictly 300–450 words.** Do not pad. Do not cut short.
-- Hook the reader in the very first sentence with drama, fact, or a relatable problem
-- Use short paragraphs (max 2–3 sentences). **Bold** key phrases for mobile scanning.
-- Use clear, short, enticing subheadings (## format)
-- End with a forward-looking thought, an engaging question, or a sharp final takeaway — NO formal "Conclusion" heading
-- Apply every banned-words rule from the system prompt above
+Generate:
+1. A punchy, viral headline matching the topic.
+2. A complete, human-sounding article body (strictly 300–450 words) with:
+   - Short paragraphs (2–3 sentences max)
+   - Clean markdown subheadings (## format)
+   - Bolded keywords for mobile scanning
+   - No AI clichés: Furthermore, Moreover, In conclusion, Delve, It is crucial, Testament, A veritable tool, Landscape, Tapestry, Beacon
+   - Hook immediately in the first sentence — no warm-up filler
+   - Forward-looking outro (no formal "Conclusion" heading)
+3. A highly detailed, production-grade text-to-image prompt describing a clean, safe editorial photograph for this article. Specify style, lighting, composition, and mood.
 
-Write the article now. Return ONLY the article — no intro like "Here is your article:"`;
+Output MUST be strictly valid JSON matching this exact schema. No markdown code blocks. No extra commentary.
 
-  } else if (type === 'ebook') {
-    const learningContext = getLearningContext('ebook');
-    firstPassPrompt = `${EBOOK_SYSTEM_PROMPT}
+{
+  "headline": "string",
+  "article_body": "string",
+  "image_generation_prompt": "string"
+}`;
+
+  console.log(`[aiService] Starting opera JSON generation (single pass)...`);
+  const raw = await callModel(prompt);
+  const parsed = parseGeminiJson(raw);
+
+  if (!parsed.headline || !parsed.article_body) {
+    throw new Error('AI response missing required fields (headline or article_body)');
+  }
+
+  // Fast editorial photo — deterministic seed from topic for consistency
+  const imageUrl = `https://picsum.photos/seed/${encodeURIComponent(params.topic + params.category)}/800/450`;
+
+  return {
+    headline: parsed.headline,
+    article_body: parsed.article_body,
+    image_generation_prompt: parsed.image_generation_prompt || `Editorial photograph for article about ${params.topic}`,
+    imageUrl,
+  };
+}
+
+export async function generateContent(type: 'opera' | 'ebook', params: any): Promise<{ content: string; imageUrl?: string }> {
+  if (type === 'opera') {
+    // Use the new single-pass JSON engine for Opera articles
+    const result = await generateOperaJson(params);
+    return {
+      content: `# ${result.headline}\n\n${result.article_body}`,
+      imageUrl: result.imageUrl,
+    };
+  }
+
+  let firstPassPrompt = "";
+  const learningContext = getLearningContext('ebook');
+  firstPassPrompt = `${EBOOK_SYSTEM_PROMPT}
 ${learningContext}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 YOUR ASSIGNMENT
@@ -254,7 +311,6 @@ Instructions:
 - Be generous with detail and explanation — the reader paid to learn, give them everything.
 
 Write the full manuscript now. Return ONLY the manuscript — no preamble, no "Here is your manuscript:".`;
-  }
 
   try {
     console.log(`[aiService] Starting ${type} generation (Pass 1: Draft)...`);
@@ -265,12 +321,6 @@ Write the full manuscript now. Return ONLY the manuscript — no preamble, no "H
     const refined = await callModel(reviewPrompt);
 
     const content = sanitizeOutput(refined);
-
-    if (type === 'opera') {
-      const imageUrl = await generateArticleImage(params.topic, params.category);
-      return { content, imageUrl };
-    }
-
     return { content };
   } catch (error: any) {
     console.error(`[aiService] ${type.toUpperCase()} Generation Failed:`, error);
