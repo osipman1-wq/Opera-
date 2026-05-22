@@ -232,29 +232,29 @@ ${learningContext}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 YOUR ASSIGNMENT — STRICT JSON OUTPUT
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-You are the "All Hub" content engine. Process this request and return ONLY a JSON object.
+You are an advanced content engine for an app called "All Hub". Your job is to process this request and return a clean, human-written piece of content alongside an optimized image generation prompt.
 
 Topic: ${params.topic}
 Category: ${params.category}
 
-Generate:
-1. A punchy, viral headline matching the topic.
-2. A complete, human-sounding article body (strictly 300–450 words) with:
-   - Short paragraphs (2–3 sentences max)
-   - Clean markdown subheadings (## format)
-   - Bolded keywords for mobile scanning
-   - No AI clichés: Furthermore, Moreover, In conclusion, Delve, It is crucial, Testament, A veritable tool, Landscape, Tapestry, Beacon
-   - Hook immediately in the first sentence — no warm-up filler
-   - Forward-looking outro (no formal "Conclusion" heading)
-3. A highly detailed, production-grade text-to-image prompt describing a clean, safe editorial photograph for this article. Specify style, lighting, composition, and mood.
-
-Output MUST be strictly valid JSON matching this exact schema. No markdown code blocks. No extra commentary.
+You must output your response strictly as a JSON object matching this exact schema:
 
 {
-  "headline": "string",
-  "article_body": "string",
-  "image_generation_prompt": "string"
-}`;
+  "headline": "A punchy, viral headline matching the user topic",
+  "article_body": "The complete, human-sounding text formatted with short paragraphs (2-3 sentences), clean markdown subheadings (## format), and bolded keywords. Strictly avoid AI clichés like 'Furthermore', 'Moreover', 'Delve', or 'In conclusion'.",
+  "image_generation_prompt": "A highly detailed, production-grade text-to-image prompt. Describe a high-quality photo or illustration that visually represents the core theme of the generated article. Specify style, lighting, composition, and mood, keeping it clean and safe for advertising/blog platforms."
+}
+
+CRITICAL RULES:
+- Cut the fluff. Write immediately with local relevance, high engagement, and direct tone.
+- Do not append generic summaries at the end. Wrap up with a forward-looking thought or an engaging question.
+- Hook the reader in the very first sentence — no warm-up filler.
+- No formal section titled "Conclusion".
+- Word count: strictly 300–450 words. Do not pad. Do not cut short.
+- Active voice more than passive. Natural contractions.
+- Use specific Nigerian examples, cities, universities where relevant.
+
+Output ONLY the raw JSON object. No markdown code blocks. No extra commentary.`;
 
   console.log(`[aiService] Starting opera JSON generation (single pass)...`);
   const raw = await callModel(prompt);
