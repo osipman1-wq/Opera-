@@ -10,7 +10,7 @@ declare global {
 
 const GOOGLE_CLIENT_ID = (import.meta as any).env.VITE_GOOGLE_CLIENT_ID || '';
 
-export default function Login({ onSuccess }: { onSuccess?: () => void }) {
+export default function Login({ onSuccess, onBack }: { onSuccess?: () => void; onBack?: () => void } = {}) {
   const [mode, setMode] = useState<'signin' | 'signup'>('signin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -75,6 +75,15 @@ export default function Login({ onSuccess }: { onSuccess?: () => void }) {
   return (
     <div className="flex flex-col items-center justify-center bg-neutral-50 p-6 rounded-[32px]">
       <div className="max-w-md w-full bg-white p-10 rounded-[32px] shadow-2xl border border-neutral-100">
+        {onBack && (
+          <button
+            type="button"
+            onClick={onBack}
+            className="mb-4 text-xs font-bold uppercase tracking-widest text-neutral-400 hover:text-neutral-900 transition-colors"
+          >
+            ← Back to Hub
+          </button>
+        )}
         <div className="bg-neutral-900 w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg rotate-3 hover:rotate-0 transition-transform cursor-default">
           <Feather className="text-white" size={28} />
         </div>
@@ -195,6 +204,16 @@ export default function Login({ onSuccess }: { onSuccess?: () => void }) {
             {mode === 'signin' ? 'Sign Up' : 'Sign In'}
           </button>
         </p>
+
+        {onBack && (
+          <button
+            type="button"
+            onClick={onBack}
+            className="mt-4 w-full text-center text-xs font-bold uppercase tracking-widest text-neutral-400 hover:text-neutral-900 transition-colors"
+          >
+            Continue without signing in
+          </button>
+        )}
       </div>
     </div>
   );

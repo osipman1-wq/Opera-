@@ -3,7 +3,7 @@ import OperaWriter from '../components/OperaWriter';
 import EbookWriter from '../components/EbookWriter';
 import AdBanner from '../components/AdBanner';
 import Login from './Login';
-import { PenBox, BookOpen, Sparkles, Feather, LogOut, User, Rss, X } from 'lucide-react';
+import { PenBox, BookOpen, Sparkles, Feather, LogOut, User, Rss, X, LogIn } from 'lucide-react';
 import { useAuth } from '../AuthContext';
 import Boundary from '../components/Boundary';
 
@@ -75,34 +75,37 @@ export default function Dashboard() {
                     </span>
                   )}
                 </div>
-                {user ? (
-                  <div className="flex items-center gap-3 border-l border-neutral-200 pl-4">
-                    {user.photoURL ? (
-                      <img src={user.photoURL} alt="Profile" className="w-8 h-8 rounded-full border border-neutral-200 object-cover" />
-                    ) : (
-                      <div className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center">
-                        <User size={16} className="text-neutral-400" />
-                      </div>
-                    )}
-                    <span className="hidden md:block text-xs font-semibold text-neutral-600 max-w-[120px] truncate">
-                      {user.displayName || user.email}
-                    </span>
+                <div className="flex items-center gap-3 border-l border-neutral-200 pl-4">
+                  {user ? (
+                    <>
+                      {user.photoURL ? (
+                        <img src={user.photoURL} alt="Profile" className="w-8 h-8 rounded-full border border-neutral-200 object-cover" />
+                      ) : (
+                        <div className="w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center">
+                          <User size={16} className="text-neutral-400" />
+                        </div>
+                      )}
+                      <span className="hidden md:block text-xs font-semibold text-neutral-600 max-w-[120px] truncate">
+                        {user.displayName || user.email}
+                      </span>
+                      <button
+                        onClick={logout}
+                        className="p-2 text-neutral-400 hover:text-neutral-900 transition-colors"
+                        title="Log Out"
+                      >
+                        <LogOut size={20} />
+                      </button>
+                    </>
+                  ) : (
                     <button
-                      onClick={logout}
-                      className="p-2 text-neutral-400 hover:text-neutral-900 transition-colors"
-                      title="Log Out"
+                      onClick={() => setShowLogin(true)}
+                      className="flex items-center gap-2 bg-neutral-900 text-white px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-neutral-800 transition-all shadow-sm"
                     >
-                      <LogOut size={20} />
+                      <LogIn size={14} />
+                      Sign In
                     </button>
-                  </div>
-                ) : (
-                  <button
-                    onClick={() => setShowLogin(true)}
-                    className="text-xs font-bold text-neutral-900 bg-white border border-neutral-200 px-3 py-2 rounded-xl hover:bg-neutral-50 transition-all shadow-sm"
-                  >
-                    Sign In
-                  </button>
-                )}
+                  )}
+                </div>
               </div>
             </div>
 
@@ -165,7 +168,7 @@ export default function Dashboard() {
             >
               <X size={16} />
             </button>
-            <Login onSuccess={() => setShowLogin(false)} />
+            <Login onSuccess={() => setShowLogin(false)} onBack={() => setShowLogin(false)} />
           </div>
         </div>
       )}
