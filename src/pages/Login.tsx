@@ -10,7 +10,12 @@ declare global {
 
 const GOOGLE_CLIENT_ID = (import.meta as any).env.VITE_GOOGLE_CLIENT_ID || '';
 
-export default function Login({ onSuccess, onBack }: { onSuccess?: () => void; onBack?: () => void } = {}) {
+interface LoginProps {
+  onSuccess?: () => void;
+  onBack?: () => void;
+}
+
+export default function Login({ onSuccess, onBack }: LoginProps) {
   const [mode, setMode] = useState<'signin' | 'signup'>('signin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

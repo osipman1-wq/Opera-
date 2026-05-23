@@ -10,6 +10,7 @@ import { generateContent, generateOperaJson } from "./backend/services/aiService
 import { initWebLearner, getLearnerStatus } from "./backend/services/webLearner.js";
 import authRoutes from "./backend/routes/authRoutes.js";
 import contentRoutes from "./backend/routes/contentRoutes.js";
+import { initDatabase } from "./backend/dbInit.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -29,6 +30,13 @@ async function startServer() {
     console.log(`[${timestamp}] ${req.method} ${req.originalUrl}`);
     next();
   });
+
+  // 2b. DATABASE INIT (must succeed before routes handle requests)
+  try {
+    await initDatabase();
+  } catch (dbErr: any) {
+    console.error("[FATAL] Database initialization failed:", dbErr.message);
+  }
 
   // 3. API ROUTER
   const api = express.Router();
@@ -126,8 +134,10 @@ async function startServer() {
   });
 
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`Server running on port ${PORT}`);
     console.log(`Mode: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`API key present: ${!!process.env.GEMINI_API_KEY}`);
+    console.log(`Database URL present: ${!!process.env.DATABASE_URL}`);
     initWebLearner();
   });
 }
