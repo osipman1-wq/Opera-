@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { generateEbook } from '../services/aiClient';
-import { Loader2, BookOpen, Download, User, Building2, Type, History, Trash2, AlertCircle, Copy, Check } from 'lucide-react';
+import { Loader2, BookOpen, Download, User, Building2, Type, History, Trash2, AlertCircle, Copy, Check, RefreshCw } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from '../AuthContext';
@@ -15,6 +15,16 @@ interface Ebook {
   created_at: string;
 }
 
+function useElapsedTimer(active: boolean) {
+  const [elapsed, setElapsed] = useState(0);
+  useEffect(() => {
+    if (!active) { setElapsed(0); return; }
+    const id = setInterval(() => setElapsed(s => s + 1), 1000);
+    return () => clearInterval(id);
+  }, [active]);
+  return elapsed;
+}
+
 export default function EbookWriter() {
   const [topic, setTopic] = useState('');
   const [publisher, setPublisher] = useState('');
@@ -26,6 +36,7 @@ export default function EbookWriter() {
   const [error, setError] = useState('');
   const [history, setHistory] = useState<Ebook[]>([]);
   const { token } = useAuth();
+  const elapsed = useElapsedTimer(loading);
 
   const authHeaders = token ? { Authorization: `Bearer ${token}` } : {};
 
@@ -42,14 +53,17 @@ export default function EbookWriter() {
 
   const saveEbook = async (ebookContent: string) => {
     if (!token) return;
-    const res = await fetch('/api/content/ebooks', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', ...authHeaders },
-      body: JSON.stringify({ title: topic, authorName: author, publisher, type, content: ebookContent })
-    });
-    if (res.ok) {
-      const saved = await res.json();
-      setHistory(prev => [saved, ...prev]);
+    try {
+      const res = await fetch('/api/content/ebooks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...authHeaders },
+        body: JSON.stringify({ title: topic, authorName: author, publisher, type, content: ebookContent })
+      });
+      if (res.ok) {
+        const saved = await res.json();
+        setHistory(prev => [saved, ...prev]);
+      }
+    } catch {
     }
   };
 
@@ -59,8 +73,8 @@ export default function EbookWriter() {
     setHistory(prev => prev.filter(e => e.id !== id));
   };
 
-  const handleGenerate = async () => {
-    if (!topic.trim() || !publisher.trim() || !author.trim()) return;
+  const handleGenerate = useCallback(async () => {
+    if (!topic.trim() || !publisher.trim() || !author.trim() || loading) return;
     setLoading(true);
     setError('');
     setContent('');
@@ -69,18 +83,26 @@ export default function EbookWriter() {
       setContent(result || '');
       if (result) await saveEbook(result);
     } catch (err: any) {
-      const msg = typeof err?.message === 'string' ? err.message : typeof err === 'string' ? err : JSON.stringify(err || {});
-      setError(msg || 'Failed to generate eBook. Please try again.');
+      const msg = typeof err?.message === 'string' ? err.message : 'Failed to generate eBook. Please try again.';
+      setError(msg);
     } finally {
       setLoading(false);
     }
-  };
+  }, [topic, publisher, author, type, loading, token]);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(content);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
+
+  const loadingLabel = elapsed < 5
+    ? 'Starting manuscript generation…'
+    : elapsed < 30
+    ? `Writing your manuscript… (${elapsed}s)`
+    : elapsed < 70
+    ? `AI is crafting your chapters… (${elapsed}s)`
+    : `Finalising your book… (${elapsed}s)`;
 
   return (
     <div className="max-w-6xl mx-auto p-6">
@@ -106,7 +128,8 @@ export default function EbookWriter() {
                     value={author}
                     onChange={(e) => setAuthor(e.target.value)}
                     placeholder="Name"
-                    className="w-full px-4 py-3 rounded-2xl bg-neutral-50 border border-neutral-100 focus:outline-none focus:ring-2 focus:ring-blue-500/10 transition-all text-sm"
+                    disabled={loading}
+                    className="w-full px-4 py-3 rounded-2xl bg-neutral-50 border border-neutral-100 focus:outline-none focus:ring-2 focus:ring-blue-500/10 transition-all text-sm disabled:opacity-50"
                   />
                 </div>
                 <div>
@@ -118,7 +141,8 @@ export default function EbookWriter() {
                     value={publisher}
                     onChange={(e) => setPublisher(e.target.value)}
                     placeholder="Entity"
-                    className="w-full px-4 py-3 rounded-2xl bg-neutral-50 border border-neutral-100 focus:outline-none focus:ring-2 focus:ring-blue-500/10 transition-all text-sm"
+                    disabled={loading}
+                    className="w-full px-4 py-3 rounded-2xl bg-neutral-50 border border-neutral-100 focus:outline-none focus:ring-2 focus:ring-blue-500/10 transition-all text-sm disabled:opacity-50"
                   />
                 </div>
               </div>
@@ -130,12 +154,14 @@ export default function EbookWriter() {
                 <div className="flex p-1 bg-neutral-50 rounded-2xl border border-neutral-100">
                   <button
                     onClick={() => setType('story')}
+                    disabled={loading}
                     className={`flex-1 py-2.5 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-all ${type === 'story' ? 'bg-white text-blue-600 shadow-sm' : 'text-neutral-400 hover:text-neutral-600'}`}
                   >
                     Fiction
                   </button>
                   <button
                     onClick={() => setType('educational')}
+                    disabled={loading}
                     className={`flex-1 py-2.5 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-all ${type === 'educational' ? 'bg-white text-blue-600 shadow-sm' : 'text-neutral-400 hover:text-neutral-600'}`}
                   >
                     Educational
@@ -151,8 +177,9 @@ export default function EbookWriter() {
                   value={topic}
                   onChange={(e) => setTopic(e.target.value)}
                   rows={4}
+                  disabled={loading}
                   placeholder={type === 'story' ? "A journey of a thousand miles..." : "Modern history of West Africa..."}
-                  className="w-full px-4 py-3 rounded-2xl bg-neutral-50 border border-neutral-100 focus:outline-none focus:ring-2 focus:ring-blue-500/10 transition-all text-sm resize-none"
+                  className="w-full px-4 py-3 rounded-2xl bg-neutral-50 border border-neutral-100 focus:outline-none focus:ring-2 focus:ring-blue-500/10 transition-all text-sm resize-none disabled:opacity-50"
                 />
               </div>
 
@@ -161,15 +188,39 @@ export default function EbookWriter() {
                 disabled={loading || !topic || !publisher || !author}
                 className="w-full bg-neutral-900 text-white py-4 rounded-2xl font-bold text-sm hover:bg-neutral-800 disabled:opacity-50 transition-all flex items-center justify-center gap-2 shadow-xl"
               >
-                {loading ? <Loader2 className="animate-spin" size={18} /> : 'Generate Manuscript'}
+                {loading ? (
+                  <>
+                    <Loader2 className="animate-spin" size={18} />
+                    {loadingLabel}
+                  </>
+                ) : (
+                  'Generate Manuscript'
+                )}
               </button>
 
-              {error && (
-                <div className="p-4 bg-red-50 text-red-500 rounded-2xl flex items-center gap-2 text-[10px] font-bold uppercase border border-red-100">
-                  <AlertCircle size={14} />
-                  {error}
-                </div>
-              )}
+              <AnimatePresence>
+                {error && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    className="p-4 bg-red-50 rounded-2xl border border-red-100"
+                  >
+                    <div className="flex items-start gap-2 mb-3">
+                      <AlertCircle size={16} className="flex-shrink-0 mt-0.5 text-red-500" />
+                      <p className="text-sm font-medium text-red-700 leading-snug">{error}</p>
+                    </div>
+                    <button
+                      onClick={handleGenerate}
+                      disabled={loading || !topic || !publisher || !author}
+                      className="flex items-center gap-1.5 text-xs font-bold text-red-600 hover:text-red-800 bg-red-100 hover:bg-red-200 px-3 py-1.5 rounded-lg transition-all disabled:opacity-50"
+                    >
+                      <RefreshCw size={12} />
+                      Retry
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </div>
 
@@ -245,13 +296,24 @@ export default function EbookWriter() {
                     </button>
                   </div>
                 </div>
-                <div className="p-12 flex-1 overflow-y-auto bg-[url('https://www.transparenttextures.com/patterns/notebook.png')]">
+                <div className="p-12 flex-1 overflow-y-auto">
                   <div className="max-w-prose mx-auto">
                     <div className="markdown-body book-preview">
                       <ReactMarkdown>{content}</ReactMarkdown>
                     </div>
                   </div>
                 </div>
+              </motion.div>
+            ) : loading ? (
+              <motion.div
+                key="loading"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="h-full flex flex-col items-center justify-center bg-neutral-50/50 rounded-[32px] border-2 border-dashed border-neutral-200 min-h-[600px] gap-4"
+              >
+                <Loader2 className="text-neutral-300 animate-spin" size={40} />
+                <p className="text-neutral-400 font-medium text-sm text-center px-8">{loadingLabel}</p>
+                <p className="text-neutral-300 text-xs">eBooks take 60–90 seconds to craft fully</p>
               </motion.div>
             ) : (
               <motion.div

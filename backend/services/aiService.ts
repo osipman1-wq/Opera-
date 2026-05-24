@@ -192,6 +192,21 @@ async function generateArticleImage(topic: string, category: string): Promise<st
   return `https://picsum.photos/seed/${encodeURIComponent(topic)}/800/450`;
 }
 
+const MODEL_TIMEOUT_MS = 90_000;
+
+function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(
+      () => reject(new Error(`[aiService] ${label} timed out after ${ms / 1000}s`)),
+      ms
+    );
+    promise.then(
+      (val) => { clearTimeout(timer); resolve(val); },
+      (err) => { clearTimeout(timer); reject(err); }
+    );
+  });
+}
+
 async function callModel(promptText: string): Promise<string> {
   const ai = getGenAI();
   let lastError: Error | null = null;
@@ -199,7 +214,11 @@ async function callModel(promptText: string): Promise<string> {
   for (const model of TEXT_MODELS) {
     try {
       console.log(`[aiService] Trying text model: ${model}`);
-      const response = await ai.models.generateContent({ model, contents: promptText });
+      const response = await withTimeout(
+        ai.models.generateContent({ model, contents: promptText }),
+        MODEL_TIMEOUT_MS,
+        model
+      );
       const text = response.text || "";
       if (!text) throw new Error("AI returned empty response");
       console.log(`[aiService] Success with model: ${model}`);

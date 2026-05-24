@@ -32,7 +32,17 @@ async function startServer() {
     next();
   });
 
-  // 2b. DATABASE INIT (must succeed before routes handle requests)
+  // 2b. STARTUP VALIDATION
+  const missingVars: string[] = [];
+  if (!process.env.GEMINI_API_KEY) missingVars.push("GEMINI_API_KEY");
+  if (!process.env.JWT_SECRET) missingVars.push("JWT_SECRET");
+  if (!process.env.DATABASE_URL) missingVars.push("DATABASE_URL");
+  if (missingVars.length > 0) {
+    console.error(`[FATAL] Missing required environment variables: ${missingVars.join(", ")}`);
+    console.error("[FATAL] Article generation will fail until these are set.");
+  }
+
+  // 2c. DATABASE INIT (must succeed before routes handle requests)
   try {
     await initDatabase();
   } catch (dbErr: any) {
@@ -63,36 +73,49 @@ async function startServer() {
   // Content CRUD routes
   api.use("/content", contentRoutes);
 
-  // Single-pass JSON article generator — returns headline, body, image prompt in <15s
+  // Single-pass JSON article generator
   api.post("/generate-v2", async (req, res) => {
+    const start = Date.now();
     try {
       const { topic, category } = req.body;
       if (!topic || !category) {
         return res.status(400).json({ error: "Missing topic or category" });
       }
-
+      if (!process.env.GEMINI_API_KEY) {
+        return res.status(503).json({ error: "AI service not configured. GEMINI_API_KEY is missing." });
+      }
+      console.log(`[API /generate-v2] Start: "${topic}" [${category}]`);
       const result = await generateOperaJson({ topic, category });
+      console.log(`[API /generate-v2] Done in ${((Date.now() - start) / 1000).toFixed(1)}s`);
       return res.json(result);
     } catch (error: any) {
-      console.error("[API /generate-v2] Error:", error);
-      return res.status(500).json({ error: "Generation failed", message: error.message });
+      const elapsed = ((Date.now() - start) / 1000).toFixed(1);
+      console.error(`[API /generate-v2] Failed after ${elapsed}s:`, error.message);
+      const status = error.message?.includes("quota") || error.message?.includes("rate") ? 429 : 500;
+      return res.status(status).json({ error: error.message || "Generation failed" });
     }
   });
 
-  // Generate content via Gemini (backend only)
+  // Generate ebook content via Gemini
   api.post("/generate", async (req, res) => {
+    const start = Date.now();
     try {
       const { type, params } = req.body;
       if (!type || !params) {
         return res.status(400).json({ error: "Missing type or params" });
       }
-
+      if (!process.env.GEMINI_API_KEY) {
+        return res.status(503).json({ error: "AI service not configured. GEMINI_API_KEY is missing." });
+      }
+      console.log(`[API /generate] Start: type=${type}`);
       const result = await generateContent(type, params);
-
+      console.log(`[API /generate] Done in ${((Date.now() - start) / 1000).toFixed(1)}s`);
       return res.json(result);
     } catch (error: any) {
-      console.error("[API /generate] Error:", error);
-      return res.status(500).json({ error: "Generation failed", message: error.message });
+      const elapsed = ((Date.now() - start) / 1000).toFixed(1);
+      console.error(`[API /generate] Failed after ${elapsed}s:`, error.message);
+      const status = error.message?.includes("quota") || error.message?.includes("rate") ? 429 : 500;
+      return res.status(status).json({ error: error.message || "Generation failed" });
     }
   });
 
