@@ -20,10 +20,10 @@ async function pingServer(timeoutMs = 4000): Promise<boolean> {
 }
 
 async function waitForServer(): Promise<void> {
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 5; i++) {
     const ok = await pingServer(3000);
     if (ok) return;
-    await new Promise(r => setTimeout(r, 1500));
+    await new Promise(r => setTimeout(r, 800));
   }
   console.warn('[App] Server health check timed out — proceeding anyway.');
 }

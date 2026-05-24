@@ -16,6 +16,18 @@ export default defineConfig(({mode}) => {
         '@': path.resolve(__dirname, '.'),
       },
     },
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'vendor-react': ['react', 'react-dom'],
+            'vendor-ui': ['lucide-react', 'motion'],
+            'vendor-markdown': ['react-markdown'],
+          },
+        },
+      },
+      chunkSizeWarningLimit: 600,
+    },
     server: {
       host: '0.0.0.0',
       allowedHosts: true,
