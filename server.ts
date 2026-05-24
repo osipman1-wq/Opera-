@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+import fs from "fs";
 dotenv.config();
 
 import express from "express";
@@ -105,7 +106,10 @@ async function startServer() {
   app.use("/api", api);
 
   // 4. FRONTEND / STATIC
-  if (process.env.NODE_ENV !== "production") {
+  const distPath = path.join(process.cwd(), 'dist');
+  const isProduction = process.env.NODE_ENV === "production" || fs.existsSync(distPath);
+
+  if (!isProduction) {
     console.log("[Server] Starting Vite in middleware mode...");
     const vite = await createViteServer({
       server: { middlewareMode: true },
@@ -113,9 +117,9 @@ async function startServer() {
     });
     app.use(vite.middlewares);
   } else {
-    console.log("[Server] Serving static production files...");
-    const distPath = path.join(process.cwd(), 'dist');
+    console.log("[Server] Serving static production files from:", distPath);
     app.use(express.static(distPath));
+    // Catch-all: serve index.html for any non-API route (client-side routing)
     app.get('*', (req, res) => {
       res.sendFile(path.join(distPath, 'index.html'));
     });

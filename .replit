@@ -41,5 +41,10 @@ externalPort = 3000
 
 [deployment]
 deploymentTarget = "autoscale"
-run = ["node", "--loader", "tsx/esm", "server.ts"]
+run = ["sh", "-c", "NODE_ENV=production node --loader tsx/esm server.ts"]
 build = ["npm", "run", "build"]
+
+[userenv]
+
+[userenv.production]
+NODE_ENV = "production"
