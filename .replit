@@ -1,6 +1,8 @@
 modules = ["nodejs-20", "web", "java-graalvm22.3", "postgresql-16"]
 [agent]
 expertMode = true
+stack = "BEST_EFFORT_FALLBACK"
+integrations = ["javascript_gemini_ai_integrations:2.0.0"]
 
 [nix]
 channel = "stable-25_05"
