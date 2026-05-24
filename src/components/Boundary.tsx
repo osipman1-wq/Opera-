@@ -26,17 +26,23 @@ export default class Boundary extends React.Component<Props, State> {
   render() {
     if (this.state.hasError) {
       let errorMessage = 'Something went wrong.';
-      
-      try {
-        if (this.state.error?.message) {
-          const parsed = JSON.parse(this.state.error.message);
-          if (parsed && typeof parsed === 'object' && 'error' in parsed) {
-            errorMessage = `Database error: ${parsed.error}`;
+
+      const raw = this.state.error?.message;
+      if (raw) {
+        try {
+          const parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === 'object') {
+            // Extract nested error message from object responses
+            errorMessage =
+              parsed.error?.message
+              || parsed.message
+              || parsed.error
+              || JSON.stringify(parsed);
+          } else {
+            errorMessage = String(parsed);
           }
-        }
-      } catch {
-        if (this.state.error?.message) {
-          errorMessage = this.state.error.message;
+        } catch {
+          errorMessage = String(raw);
         }
       }
 

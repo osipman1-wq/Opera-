@@ -175,7 +175,8 @@ export default function OperaWriter() {
       setImgPrompt(data.image_generation_prompt || '');
       if (data.content) await saveArticle(data.content, data.imageUrl || '');
     } catch (err: any) {
-      setError(err.message || 'Failed to generate article. Please try again.');
+      const msg = typeof err?.message === 'string' ? err.message : typeof err === 'string' ? err : JSON.stringify(err || {});
+      setError(msg || 'Failed to generate article. Please try again.');
     } finally {
       setLoading(false);
     }

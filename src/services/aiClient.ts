@@ -15,8 +15,23 @@ async function safePost(url: string, body: object): Promise<any> {
   if (!response.ok) {
     const text = await response.text();
     if (contentType.includes("application/json")) {
-      const err = JSON.parse(text);
-      throw new Error(err.message || err.error || `Server error (${response.status})`);
+      let msg = `Server error (${response.status})`;
+      try {
+        const err = JSON.parse(text);
+        if (typeof err === 'object' && err !== null) {
+          msg = String(
+            (typeof err.message === 'string' ? err.message : undefined)
+            || (typeof err.error === 'string' ? err.error : undefined)
+            || (typeof err.detail === 'string' ? err.detail : undefined)
+            || JSON.stringify(err)
+          );
+        } else if (err !== undefined) {
+          msg = String(err);
+        }
+      } catch {
+        msg = text.slice(0, 200) || `Server error (${response.status})`;
+      }
+      throw new Error(msg);
     }
     throw new Error(`Server error (${response.status}). Please try again in a moment.`);
   }

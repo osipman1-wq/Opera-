@@ -69,7 +69,8 @@ export default function EbookWriter() {
       setContent(result || '');
       if (result) await saveEbook(result);
     } catch (err: any) {
-      setError(err.message || 'Failed to generate eBook. Please try again.');
+      const msg = typeof err?.message === 'string' ? err.message : typeof err === 'string' ? err : JSON.stringify(err || {});
+      setError(msg || 'Failed to generate eBook. Please try again.');
     } finally {
       setLoading(false);
     }

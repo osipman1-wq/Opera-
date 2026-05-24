@@ -48,15 +48,26 @@ async function apiFetch(path: string, options?: RequestInit, maxRetries = 6): Pr
 
       const data = await res.json();
       // App-level errors (wrong password, duplicate email, etc.) — throw immediately, no retry
-      if (!res.ok) throw new Error(data.error || data.message || `Request failed (${res.status})`);
+      if (!res.ok) {
+        const serverMsg = typeof data.error === 'string' ? data.error : typeof data.message === 'string' ? data.message : typeof data.detail === 'string' ? data.detail : JSON.stringify(data);
+        throw new Error(serverMsg || `Request failed (${res.status})`);
+      }
       return data;
 
     } catch (err: any) {
-      // Re-throw app errors immediately (they're not retryable)
-      if (err.message && !err.message.includes('starting up') && err.name !== 'TypeError') throw err;
+      // Normalize error — err.message can be an object in some fetch error scenarios
+      let errMsg = String(err?.message || err);
+      if (errMsg === '[object Object]' && typeof err === 'object') {
+        errMsg = JSON.stringify(err);
+      }
+      const cleanErr = new Error(errMsg);
+      cleanErr.name = err?.name || 'Error';
 
-      const isNetworkError = err.name === 'TypeError';
-      if ((isNetworkError || err.message?.includes('starting up')) && attempt < maxRetries) {
+      // Re-throw app errors immediately (they're not retryable)
+      if (errMsg && !errMsg.includes('starting up') && cleanErr.name !== 'TypeError') throw cleanErr;
+
+      const isNetworkError = cleanErr.name === 'TypeError';
+      if ((isNetworkError || errMsg?.includes('starting up')) && attempt < maxRetries) {
         await new Promise(r => setTimeout(r, 1200 * attempt));
         continue;
       }
@@ -64,6 +75,18 @@ async function apiFetch(path: string, options?: RequestInit, maxRetries = 6): Pr
     }
   }
   throw new Error('Could not reach the server. Please refresh and try again.');
+}
+
+function normalizeError(err: any): Error {
+  if (err instanceof Error) {
+    if (String(err.message) === '[object Object]' && typeof err === 'object') {
+      return new Error(JSON.stringify(err));
+    }
+    return err;
+  }
+  if (typeof err === 'string') return new Error(err);
+  if (typeof err === 'object') return new Error(JSON.stringify(err));
+  return new Error(String(err));
 }
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -101,8 +124,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       });
       saveSession(data.token, data.user);
     } catch (err: any) {
-      setAuthError(err.message || 'Login failed.');
-      throw err;
+      const clean = normalizeError(err);
+      setAuthError(clean.message || 'Login failed.');
+      throw clean;
     }
   };
 
@@ -115,8 +139,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       });
       saveSession(data.token, data.user);
     } catch (err: any) {
-      setAuthError(err.message || 'Sign up failed.');
-      throw err;
+      const clean = normalizeError(err);
+      setAuthError(clean.message || 'Sign up failed.');
+      throw clean;
     }
   };
 
@@ -129,8 +154,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       });
       saveSession(data.token, data.user);
     } catch (err: any) {
-      setAuthError(err.message || 'Google sign-in failed.');
-      throw err;
+      const clean = normalizeError(err);
+      setAuthError(clean.message || 'Google sign-in failed.');
+      throw clean;
     }
   };
 

@@ -68,7 +68,10 @@ export default function Login({ onSuccess, onBack }: LoginProps) {
       } else {
         await signUp(email, password, displayName);
       }
-    } catch {}
+    } catch (err: any) {
+      // AuthContext sets authError already; just stop loading
+      console.error('[Login] Auth failed:', err?.message || err);
+    }
     setLoading(false);
   };
 
