@@ -1,20 +1,15 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# AllHub
 
-# Run and deploy your AI Studio app
+AllHub is a standalone AI publisher for generating articles, eBooks, and stories.
 
-This contains everything you need to run your app locally.
+## Run locally
 
-View your app in AI Studio: https://ai.studio/apps/d2dfaa40-ec1c-4465-a84b-e111189efab9
+1. Install dependencies with `npm install`.
+2. Add `OPENAI_API_KEY` to your environment or Replit Secrets.
+3. Start the server with `npm run dev`.
 
-## Run Locally
+The app and API are served from the same origin. The generation endpoints are:
 
-**Prerequisites:**  Node.js
-
-
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+- `POST /api/generate-article`
+- `POST /api/generate-ebook`
+- `POST /api/generate-story`

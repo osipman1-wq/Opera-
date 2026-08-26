@@ -1,13 +1,294 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Google AI Studio App</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AllHub - Professional AI Publisher</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+</head>
+<body>
+    <header class="app-header">
+        <h1>AllHub</h1>
+        <p>Professional AI Publisher — Articles, eBooks & Stories</p>
+    </header>
+
+    <main class="app-container">
+        <nav class="nav-tabs" aria-label="Content type">
+            <button class="tab-btn active" type="button" data-tab="article">Article</button>
+            <button class="tab-btn" type="button" data-tab="ebook">eBook</button>
+            <button class="tab-btn" type="button" data-tab="story">Story</button>
+        </nav>
+
+        <section id="article-tab" class="tab-content active">
+            <div class="form-container">
+                <h2>Generate News Article</h2>
+                <form id="article-form">
+                    <label for="article-topic">Article topic</label>
+                    <input id="article-topic" type="text" placeholder="e.g. AI technology trends" required>
+                    <label for="article-keywords">Keywords</label>
+                    <input id="article-keywords" type="text" placeholder="Comma-separated keywords">
+                    <label for="article-source">Reference link (optional)</label>
+                    <input id="article-source" type="url" placeholder="https://example.com/article">
+                    <button class="generate-btn" type="submit">Generate Article</button>
+                </form>
+                <div id="article-result"></div>
+            </div>
+        </section>
+
+        <section id="ebook-tab" class="tab-content">
+            <div class="form-container">
+                <h2>Create Professional eBook</h2>
+                <form id="ebook-form">
+                    <label for="ebook-title">Book title</label>
+                    <input id="ebook-title" type="text" placeholder="Book title" required>
+                    <label for="ebook-author">Author name</label>
+                    <input id="ebook-author" type="text" placeholder="Your name" required>
+                    <label for="ebook-genre">Genre</label>
+                    <input id="ebook-genre" type="text" placeholder="Fiction, self-help, business...">
+                    <label for="ebook-chapters">Number of chapters (1–15)</label>
+                    <input id="ebook-chapters" type="number" min="1" max="15" value="5">
+                    <label for="ebook-description">Brief description</label>
+                    <textarea id="ebook-description" placeholder="What should this book cover?"></textarea>
+                    <label for="ebook-source">Reference link (optional)</label>
+                    <input id="ebook-source" type="url" placeholder="https://example.com/reference">
+                    <button class="generate-btn" type="submit">Generate eBook</button>
+                </form>
+                <div id="ebook-result"></div>
+            </div>
+        </section>
+
+        <section id="story-tab" class="tab-content">
+            <div class="form-container">
+                <h2>Write a Story</h2>
+                <form id="story-form">
+                    <label for="story-title">Story title</label>
+                    <input id="story-title" type="text" placeholder="Story title" required>
+                    <label for="story-author">Author name</label>
+                    <input id="story-author" type="text" placeholder="Your name" required>
+                    <label for="story-genre">Genre</label>
+                    <select id="story-genre">
+                        <option value="romance">Romance</option>
+                        <option value="thriller">Thriller</option>
+                        <option value="scifi">Sci-Fi</option>
+                        <option value="fantasy">Fantasy</option>
+                        <option value="mystery">Mystery</option>
+                        <option value="adventure">Adventure</option>
+                    </select>
+                    <label for="story-length">Length</label>
+                    <select id="story-length">
+                        <option value="short">Short story (3 parts)</option>
+                        <option value="medium">Novella (5 parts)</option>
+                        <option value="long">Full novel (8 parts)</option>
+                    </select>
+                    <label for="story-characters">Main characters</label>
+                    <input id="story-characters" type="text" placeholder="John, Sarah, Mike">
+                    <label for="story-plot">Main plot idea</label>
+                    <textarea id="story-plot" placeholder="Describe the central conflict or idea..."></textarea>
+                    <label for="story-source">Reference link (optional)</label>
+                    <input id="story-source" type="url" placeholder="https://example.com/reference">
+                    <button class="generate-btn" type="submit">Generate Story</button>
+                </form>
+                <div id="story-result"></div>
+            </div>
+        </section>
+    </main>
+
+    <div id="loading" class="loading-overlay" role="status" aria-live="polite">
+        <div class="spinner"></div>
+        <p>Creating your content...</p>
+    </div>
+
+    <script>
+        const API = "/api";
+
+        document.querySelectorAll(".tab-btn").forEach((button) => {
+            button.addEventListener("click", () => {
+                const tab = button.dataset.tab;
+                document.querySelectorAll(".tab-btn").forEach((item) => item.classList.toggle("active", item === button));
+                document.querySelectorAll(".tab-content").forEach((section) => section.classList.toggle("active", section.id === `${tab}-tab`));
+            });
+        });
+
+        function escapeHtml(value) {
+            return String(value ?? "").replace(/[&<>"']/g, (character) => ({
+                "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+            }[character]));
+        }
+
+        function paragraphs(value, separator = "<br><br>") {
+            return escapeHtml(value).replace(/\r?\n/g, separator);
+        }
+
+        function setLoading(active) {
+            document.getElementById("loading").classList.toggle("active", active);
+        }
+
+        function showError(id, message) {
+            document.getElementById(id).innerHTML = `<div class="result-container"><strong>Error:</strong> ${escapeHtml(message)}</div>`;
+        }
+
+        async function post(endpoint, payload) {
+            const response = await fetch(`${API}/${endpoint}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "Accept": "application/json" },
+                body: JSON.stringify(payload)
+            });
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok || !data.success) {
+                throw new Error(data.error || `Request failed (${response.status})`);
+            }
+            return data;
+        }
+
+        function downloadText(text, filename) {
+            const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = filename;
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function safeFilename(value, fallback) {
+            const filename = String(value || fallback).replace(/[^a-z0-9]+/gi, "_").replace(/^_|_$/g, "");
+            return filename || fallback;
+        }
+
+        function renderArticle(article) {
+            const result = document.getElementById("article-result");
+            result.innerHTML = `
+                <div class="result-container">
+                    <div class="article-output"><pre style="white-space:pre-wrap;font:inherit;">${escapeHtml(article)}</pre></div>
+                    <div class="download-links">
+                        <button class="download-btn" type="button" id="download-article">Download article</button>
+                    </div>
+                </div>`;
+            document.getElementById("download-article").addEventListener("click", () => downloadText(article, "article.txt"));
+        }
+
+        function renderEbook(book) {
+            const chapters = (book.chapters || []).map((chapter) => `
+                <article class="chapter">
+                    <h3>${escapeHtml(chapter.title)}</h3>
+                    <div>${paragraphs(chapter.content)}</div>
+                </article>`).join("");
+            document.getElementById("ebook-result").innerHTML = `
+                <div class="result-container">
+                    <div class="book-content ebook-preview">
+                        <div class="book-header">
+                            <div class="book-title">${escapeHtml(book.title)}</div>
+                            <div class="book-meta">by ${escapeHtml(book.author)}</div>
+                            <div class="book-meta">${escapeHtml(book.publisher)}</div>
+                            <div class="book-meta">${escapeHtml(book.isbn)}</div>
+                        </div>
+                        <div class="copyright-page"><strong>${escapeHtml(book.copyright)}</strong><br><br>${paragraphs(book.legal)}<br><br><em>First Edition</em></div>
+                        <div class="dedication">${paragraphs(book.dedication)}</div>
+                        <h2>Introduction</h2>
+                        <div>${paragraphs(book.introduction)}</div>
+                        ${chapters}
+                        <h2>Conclusion</h2>
+                        <div>${paragraphs(book.conclusion)}</div>
+                        <div class="dedication"><strong>THE END</strong></div>
+                    </div>
+                    <div class="download-links">
+                        <button class="download-btn" type="button" id="download-ebook">Download book</button>
+                    </div>
+                </div>`;
+            document.getElementById("download-ebook").addEventListener("click", () => {
+                let text = `${book.title}\n\nby ${book.author}\n${book.publisher}\n${book.copyright}\n${book.isbn}\n\nDEDICATION\n${book.dedication}\n\nINTRODUCTION\n${book.introduction}\n\n`;
+                (book.chapters || []).forEach((chapter) => { text += `\n\n${chapter.title}\n\n${chapter.content}`; });
+                text += `\n\nCONCLUSION\n${book.conclusion}`;
+                downloadText(text, `${safeFilename(book.title, "ebook")}.txt`);
+            });
+        }
+
+        function renderStory(story, genre) {
+            const parts = (story.parts || []).map((part) => `
+                <article class="chapter">
+                    <h3>${escapeHtml(part.title)}</h3>
+                    <div>${paragraphs(part.content)}</div>
+                </article>`).join("");
+            document.getElementById("story-result").innerHTML = `
+                <div class="result-container">
+                    <div class="book-content story-preview">
+                        <div class="book-header">
+                            <div class="book-title">${escapeHtml(story.title)}</div>
+                            <div class="book-meta">A ${escapeHtml(genre)} story by ${escapeHtml(story.author)}</div>
+                            <div class="book-meta">${escapeHtml(story.copyright)}</div>
+                        </div>
+                        <div class="dedication">${paragraphs(story.dedication)}</div>
+                        <h2>Contents</h2>
+                        <div>${(story.tableOfContents || []).map(escapeHtml).join("<br>")}</div>
+                        ${parts}
+                        <div class="dedication"><strong>THE END</strong></div>
+                    </div>
+                    <div class="download-links">
+                        <button class="download-btn" type="button" id="download-story">Download story</button>
+                    </div>
+                </div>`;
+            document.getElementById("download-story").addEventListener("click", () => {
+                let text = `${story.title}\n\nA Story by ${story.author}\n${story.copyright}\n\nDEDICATION\n${story.dedication}\n\nCONTENTS\n${(story.tableOfContents || []).join("\n")}\n\n`;
+                (story.parts || []).forEach((part) => { text += `\n\n${part.title}\n\n${part.content}`; });
+                downloadText(text + "\n\nTHE END", `${safeFilename(story.title, "story")}.txt`);
+            });
+        }
+
+        document.getElementById("article-form").addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const result = document.getElementById("article-result");
+            result.innerHTML = "";
+            setLoading(true);
+            try {
+                const data = await post("generate-article", {
+                    topic: document.getElementById("article-topic").value.trim(),
+                    keywords: document.getElementById("article-keywords").value.trim(),
+                    sourceUrl: document.getElementById("article-source").value.trim() || undefined
+                });
+                renderArticle(data.article);
+            } catch (error) { showError("article-result", error.message); }
+            finally { setLoading(false); }
+        });
+
+        document.getElementById("ebook-form").addEventListener("submit", async (event) => {
+            event.preventDefault();
+            document.getElementById("ebook-result").innerHTML = "";
+            setLoading(true);
+            try {
+                const data = await post("generate-ebook", {
+                    title: document.getElementById("ebook-title").value.trim(),
+                    authorName: document.getElementById("ebook-author").value.trim(),
+                    genre: document.getElementById("ebook-genre").value.trim(),
+                    chapters: Number(document.getElementById("ebook-chapters").value),
+                    description: document.getElementById("ebook-description").value.trim(),
+                    sourceUrl: document.getElementById("ebook-source").value.trim() || undefined
+                });
+                renderEbook(data.book);
+            } catch (error) { showError("ebook-result", error.message); }
+            finally { setLoading(false); }
+        });
+
+        document.getElementById("story-form").addEventListener("submit", async (event) => {
+            event.preventDefault();
+            document.getElementById("story-result").innerHTML = "";
+            const genre = document.getElementById("story-genre").value;
+            setLoading(true);
+            try {
+                const data = await post("generate-story", {
+                    title: document.getElementById("story-title").value.trim(),
+                    authorName: document.getElementById("story-author").value.trim(),
+                    genre,
+                    length: document.getElementById("story-length").value,
+                    characters: document.getElementById("story-characters").value.trim(),
+                    plot: document.getElementById("story-plot").value.trim(),
+                    sourceUrl: document.getElementById("story-source").value.trim() || undefined
+                });
+                renderStory(data.story, genre);
+            } catch (error) { showError("story-result", error.message); }
+            finally { setLoading(false); }
+        });
+    </script>
+</body>
 </html>
 
