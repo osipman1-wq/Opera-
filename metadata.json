@@ -1,6 +1,6 @@
 {
   "name": "AllHub - AI Publisher",
-  "description": "Professional AI Publisher for generating articles, eBooks, and stories with Google Gemini.",
+  "description": "Professional AI Publisher, Adaptive Learning Studio, and Personal Savings & Tax Ledger system with account identification, transaction history, and 1099-INT statement generation.",
   "requestFramePermissions": [],
   "majorCapabilities": [
     "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"

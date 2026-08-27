@@ -1,15 +1,15 @@
-const { generateArticle } = require("../services/ai");
+const { generateLearningModule } = require("../services/ai");
 const { fetchReadableText } = require("../utils/fetchSource");
 
-async function createArticle(req, res, next) {
+async function createLearningModule(req, res, next) {
   try {
-    const { topic, keywords, tone, sourceUrl } = req.body;
+    const { topic, targetLevel, modulesCount, tone, sourceUrl } = req.body;
 
     if (!topic) {
       return res.status(400).json({ success: false, error: "Topic is required" });
     }
 
-    let referenceText = null;
+    let referenceText;
     if (sourceUrl) {
       try {
         referenceText = await fetchReadableText(sourceUrl);
@@ -18,11 +18,18 @@ async function createArticle(req, res, next) {
       }
     }
 
-    const article = await generateArticle({ topic, keywords, tone, referenceText });
-    res.json({ success: true, article });
+    const learning = await generateLearningModule({
+      topic,
+      targetLevel,
+      modulesCount,
+      tone,
+      referenceText
+    });
+
+    res.json({ success: true, learning });
   } catch (err) {
     next(err);
   }
 }
 
-module.exports = { createArticle };
+module.exports = { createLearningModule };

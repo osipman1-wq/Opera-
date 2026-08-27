@@ -3,7 +3,7 @@ const { fetchReadableText } = require("../utils/fetchSource");
 
 async function createEbook(req, res, next) {
   try {
-    const { title, authorName, genre, chapters, description, sourceUrl } = req.body;
+    const { title, authorName, genre, chapters, description, tone, sourceUrl } = req.body;
 
     if (!title || !authorName) {
       return res.status(400).json({ success: false, error: "Title and authorName are required" });
@@ -14,11 +14,11 @@ async function createEbook(req, res, next) {
       try {
         referenceText = await fetchReadableText(sourceUrl);
       } catch (err) {
-        return res.status(400).json({ success: false, error: `Could not read sourceUrl: ${err.message}` });
+        return res.status(400).json({ success: false, error: `Could not read reference URL: ${err.message}` });
       }
     }
 
-    const book = await generateEbook({ title, authorName, genre, chapters, description, referenceText });
+    const book = await generateEbook({ title, authorName, genre, chapters, description, tone, referenceText });
     res.json({ success: true, book });
   } catch (err) {
     next(err);

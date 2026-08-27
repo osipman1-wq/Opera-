@@ -9,104 +9,1014 @@
 </head>
 <body>
     <header class="app-header">
-        <h1>AllHub</h1>
-        <p>Professional AI Publisher — Articles, eBooks & Stories</p>
+        <div class="header-content">
+            <div class="header-top">
+                <div class="brand">
+                    <div class="brand-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                        </svg>
+                    </div>
+                    <h1>AllHub</h1>
+                </div>
+                <div class="user-auth-box" id="auth-box">
+                    <button class="auth-header-btn" type="button" id="btn-open-auth">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        <span>Sign In / Register</span>
+                    </button>
+                </div>
+            </div>
+            <p class="tagline">Professional AI Publisher & Adaptive Learning — Quality Articles, eBooks, Stories & Courseware</p>
+            <div class="header-badges">
+                <span class="badge">Google Gemini 3.7</span>
+                <span class="badge">Human-Style Copywriting</span>
+                <span class="badge">Adaptive Courseware & Quizzes</span>
+                <span class="badge">Export to TXT, MD, HTML</span>
+            </div>
+        </div>
     </header>
 
     <main class="app-container">
         <nav class="nav-tabs" aria-label="Content type">
-            <button class="tab-btn active" type="button" data-tab="article">Article</button>
-            <button class="tab-btn" type="button" data-tab="ebook">eBook</button>
-            <button class="tab-btn" type="button" data-tab="story">Story</button>
+            <button class="tab-btn active" type="button" data-tab="article" id="tab-btn-article">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h10l6 6v10a2 2 0 0 1-2 2z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                <span>News Article</span>
+            </button>
+            <button class="tab-btn" type="button" data-tab="ebook" id="tab-btn-ebook">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                <span>Full eBook</span>
+            </button>
+            <button class="tab-btn" type="button" data-tab="story" id="tab-btn-story">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                <span>Creative Story</span>
+            </button>
+            <button class="tab-btn" type="button" data-tab="learning" id="tab-btn-learning">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path><circle cx="12" cy="10" r="3"></circle><line x1="12" y1="13" x2="12" y2="17"></line></svg>
+                <span>LearnWork</span>
+            </button>
+            <button class="tab-btn" type="button" data-tab="savings" id="tab-btn-savings">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line><path d="M7 15h.01"></path><path d="M11 15h2"></path></svg>
+                <span>Savings & Tax Account</span>
+            </button>
         </nav>
 
+        <!-- ARTICLE TAB -->
         <section id="article-tab" class="tab-content active">
             <div class="form-container">
-                <h2>Generate News Article</h2>
+                <div class="form-header">
+                    <h2>Generate News & Feature Article</h2>
+                    <p class="form-subtitle">Produce publication-ready journalism with structured headlines, hook lead, and cohesive flow.</p>
+                </div>
+
+                <div class="preset-section">
+                    <span class="preset-label">Quick test templates:</span>
+                    <div class="preset-buttons">
+                        <button type="button" class="preset-btn" data-target="article" data-topic="Quantum Computing and Modern Cryptography in 2026" data-keywords="post-quantum, lattice encryption, data security, breakthroughs" data-tone="Investigative & Analytical">Quantum Security</button>
+                        <button type="button" class="preset-btn" data-target="article" data-topic="The Next Frontier of Clean Fusion Energy" data-keywords="magnetic confinement, net positive energy, grid deployment, clean power" data-tone="Engaging Journalism">Fusion Power</button>
+                        <button type="button" class="preset-btn" data-target="article" data-topic="Asynchronous Work and the New Office Culture" data-keywords="deep work, remote leadership, global teams, productivity" data-tone="Thought Leadership">Future of Work</button>
+                    </div>
+                </div>
+
                 <form id="article-form">
-                    <label for="article-topic">Article topic</label>
-                    <input id="article-topic" type="text" placeholder="e.g. AI technology trends" required>
-                    <label for="article-keywords">Keywords</label>
-                    <input id="article-keywords" type="text" placeholder="Comma-separated keywords">
-                    <label for="article-source">Reference link (optional)</label>
-                    <input id="article-source" type="url" placeholder="https://example.com/article">
-                    <button class="generate-btn" type="submit">Generate Article</button>
+                    <div class="form-group">
+                        <div class="label-row">
+                            <label for="article-topic">Article Topic <span class="required">*</span></label>
+                            <button type="button" class="btn-refine" data-type="article" data-input="article-topic" title="Refine topic using Gemini prompt optimization">
+                                <span>✨ Refine Topic</span>
+                            </button>
+                        </div>
+                        <input id="article-topic" type="text" placeholder="e.g. Breakthroughs in Renewable Solid-State Batteries" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group flex-1">
+                            <label for="article-keywords">Keywords (comma-separated)</label>
+                            <input id="article-keywords" type="text" placeholder="e.g. energy density, fast charging, EV adoption">
+                        </div>
+                        <div class="form-group flex-1">
+                            <label for="article-tone">Tone & Editorial Style</label>
+                            <select id="article-tone">
+                                <option value="Engaging Journalism">Engaging Journalism (Default)</option>
+                                <option value="Investigative & Analytical">Investigative & Analytical</option>
+                                <option value="Thought Leadership & Opinion">Thought Leadership & Opinion</option>
+                                <option value="Accessible & Educational">Accessible & Educational</option>
+                                <option value="Dynamic & Fast-Paced">Dynamic & Fast-Paced</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="article-source">Reference Link / Web Source (optional)</label>
+                        <input id="article-source" type="url" placeholder="https://example.com/press-release-or-source">
+                        <span class="input-hint">Publicly accessible webpage or press release (free of anti-bot protections) for background facts.</span>
+                    </div>
+
+                    <button class="generate-btn" type="submit" id="btn-generate-article">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+                        <span>Generate Article</span>
+                    </button>
                 </form>
                 <div id="article-result"></div>
             </div>
         </section>
 
+        <!-- EBOOK TAB -->
         <section id="ebook-tab" class="tab-content">
             <div class="form-container">
-                <h2>Create Professional eBook</h2>
+                <div class="form-header">
+                    <h2>Create Professional Multi-Chapter eBook</h2>
+                    <p class="form-subtitle">Generates full book architecture including cover metadata, copyright, dedication, introduction, chapters, and conclusion.</p>
+                </div>
+
+                <div class="preset-section">
+                    <span class="preset-label">Quick test templates:</span>
+                    <div class="preset-buttons">
+                        <button type="button" class="preset-btn" data-target="ebook" data-title="Deep Focus: Mastering Mental Clarity" data-author="Elena Vance" data-genre="Self-Improvement & Psychology" data-chapters="4" data-description="A practical guide to reclaiming attention, building sustainable work routines, and eliminating cognitive overload in a digital world." data-tone="Insightful & Inspiring">Deep Focus</button>
+                        <button type="button" class="preset-btn" data-target="ebook" data-title="The Modern Founder's Playbook" data-author="Marcus Vance" data-genre="Business & Entrepreneurship" data-chapters="5" data-description="From early validation to scalable distribution: building resilient technology companies in competitive markets." data-tone="Pragmatic & Authoritative">Founder's Playbook</button>
+                    </div>
+                </div>
+
                 <form id="ebook-form">
-                    <label for="ebook-title">Book title</label>
-                    <input id="ebook-title" type="text" placeholder="Book title" required>
-                    <label for="ebook-author">Author name</label>
-                    <input id="ebook-author" type="text" placeholder="Your name" required>
-                    <label for="ebook-genre">Genre</label>
-                    <input id="ebook-genre" type="text" placeholder="Fiction, self-help, business...">
-                    <label for="ebook-chapters">Number of chapters (1–15)</label>
-                    <input id="ebook-chapters" type="number" min="1" max="15" value="5">
-                    <label for="ebook-description">Brief description</label>
-                    <textarea id="ebook-description" placeholder="What should this book cover?"></textarea>
-                    <label for="ebook-source">Reference link (optional)</label>
-                    <input id="ebook-source" type="url" placeholder="https://example.com/reference">
-                    <button class="generate-btn" type="submit">Generate eBook</button>
+                    <div class="form-row">
+                        <div class="form-group flex-2">
+                            <div class="label-row">
+                                <label for="ebook-title">Book Title <span class="required">*</span></label>
+                                <button type="button" class="btn-refine" data-type="ebook" data-input="ebook-title" title="Refine title and book concept">
+                                    <span>✨ Refine Title</span>
+                                </button>
+                            </div>
+                            <input id="ebook-title" type="text" placeholder="e.g. Navigating Uncharted Waters" required>
+                        </div>
+                        <div class="form-group flex-1">
+                            <label for="ebook-author">Author Name <span class="required">*</span></label>
+                            <input id="ebook-author" type="text" placeholder="e.g. Sarah Jenkins" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group flex-1">
+                            <label for="ebook-genre">Genre / Category</label>
+                            <input id="ebook-genre" type="text" placeholder="e.g. Non-Fiction, Tech, Leadership">
+                        </div>
+                        <div class="form-group flex-1">
+                            <label for="ebook-chapters">Chapters (1–15)</label>
+                            <input id="ebook-chapters" type="number" min="1" max="15" value="4">
+                        </div>
+                        <div class="form-group flex-1">
+                            <label for="ebook-tone">Writing Tone</label>
+                            <select id="ebook-tone">
+                                <option value="Authoritative & Clear">Authoritative & Clear</option>
+                                <option value="Conversational & Engaging">Conversational & Engaging</option>
+                                <option value="Inspirational & Empowering">Inspirational & Empowering</option>
+                                <option value="Academic & Rigorous">Academic & Rigorous</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ebook-description">Book Concept & Objectives</label>
+                        <textarea id="ebook-description" placeholder="Summarize the core theme, reader takeaways, and key themes to cover across chapters..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="ebook-source">Reference Link / Study Material (optional)</label>
+                        <input id="ebook-source" type="url" placeholder="https://example.com/research-notes">
+                    </div>
+
+                    <button class="generate-btn" type="submit" id="btn-generate-ebook">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                        <span>Generate Complete eBook</span>
+                    </button>
                 </form>
                 <div id="ebook-result"></div>
             </div>
         </section>
 
+        <!-- STORY TAB -->
         <section id="story-tab" class="tab-content">
             <div class="form-container">
-                <h2>Write a Story</h2>
+                <div class="form-header">
+                    <h2>Write a Creative Fiction Story</h2>
+                    <p class="form-subtitle">Craft immersive multi-part stories with dialogue, atmosphere, character development, and narrative arc.</p>
+                </div>
+
+                <div class="preset-section">
+                    <span class="preset-label">Quick test templates:</span>
+                    <div class="preset-buttons">
+                        <button type="button" class="preset-btn" data-target="story" data-title="Echoes of Kepler-452b" data-author="Kaelen Mercer" data-genre="scifi" data-length="short" data-characters="Captain Mara Chen, Android unit E-9, Dr. Gabriel Frost" data-plot="A lone exploratory vessel investigates a mysterious repeating signal on an ancient exoplanet only to discover the signal is originating from their own future." data-tone="Atmospheric & Suspenseful">Echoes of Kepler</button>
+                        <button type="button" class="preset-btn" data-target="story" data-title="The Clockmaker of Vienna" data-author="Julian Meyer" data-genre="mystery" data-length="short" data-characters="Hans Weber, Inspector Clara Brandt" data-plot="An antique pocket watch found at a museum burglary continues running backwards, revealing a hidden compartment tied to an unsolved 1920s case." data-tone="Noir & Intriguing">Clockmaker</button>
+                    </div>
+                </div>
+
                 <form id="story-form">
-                    <label for="story-title">Story title</label>
-                    <input id="story-title" type="text" placeholder="Story title" required>
-                    <label for="story-author">Author name</label>
-                    <input id="story-author" type="text" placeholder="Your name" required>
-                    <label for="story-genre">Genre</label>
-                    <select id="story-genre">
-                        <option value="romance">Romance</option>
-                        <option value="thriller">Thriller</option>
-                        <option value="scifi">Sci-Fi</option>
-                        <option value="fantasy">Fantasy</option>
-                        <option value="mystery">Mystery</option>
-                        <option value="adventure">Adventure</option>
-                    </select>
-                    <label for="story-length">Length</label>
-                    <select id="story-length">
-                        <option value="short">Short story (3 parts)</option>
-                        <option value="medium">Novella (5 parts)</option>
-                        <option value="long">Full novel (8 parts)</option>
-                    </select>
-                    <label for="story-characters">Main characters</label>
-                    <input id="story-characters" type="text" placeholder="John, Sarah, Mike">
-                    <label for="story-plot">Main plot idea</label>
-                    <textarea id="story-plot" placeholder="Describe the central conflict or idea..."></textarea>
-                    <label for="story-source">Reference link (optional)</label>
-                    <input id="story-source" type="url" placeholder="https://example.com/reference">
-                    <button class="generate-btn" type="submit">Generate Story</button>
+                    <div class="form-row">
+                        <div class="form-group flex-2">
+                            <label for="story-title">Story Title <span class="required">*</span></label>
+                            <input id="story-title" type="text" placeholder="e.g. The Glass Cartographer" required>
+                        </div>
+                        <div class="form-group flex-1">
+                            <label for="story-author">Author Name <span class="required">*</span></label>
+                            <input id="story-author" type="text" placeholder="e.g. Julian Ross" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group flex-1">
+                            <label for="story-genre">Genre</label>
+                            <select id="story-genre">
+                                <option value="scifi">Sci-Fi</option>
+                                <option value="mystery">Mystery</option>
+                                <option value="thriller">Thriller</option>
+                                <option value="fantasy">Fantasy</option>
+                                <option value="romance">Romance</option>
+                                <option value="adventure">Adventure</option>
+                            </select>
+                        </div>
+                        <div class="form-group flex-1">
+                            <label for="story-length">Story Scope</label>
+                            <select id="story-length">
+                                <option value="short">Short Story (3 Parts)</option>
+                                <option value="medium">Novella (5 Parts)</option>
+                                <option value="long">Full Novel Arc (8 Parts)</option>
+                            </select>
+                        </div>
+                        <div class="form-group flex-1">
+                            <label for="story-tone">Narrative Style</label>
+                            <select id="story-tone">
+                                <option value="Immersive & Vivid">Immersive & Vivid</option>
+                                <option value="Tense & Suspenseful">Tense & Suspenseful</option>
+                                <option value="Poetic & Reflective">Poetic & Reflective</option>
+                                <option value="Humorous & Quick-Witted">Humorous & Quick-Witted</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="story-characters">Key Characters</label>
+                        <input id="story-characters" type="text" placeholder="e.g. Rowan (a stubborn archivist), Zephyr (an exiled cartographer)">
+                    </div>
+
+                    <div class="form-group">
+                        <div class="label-row">
+                            <label for="story-plot">Central Plot & Conflict</label>
+                            <button type="button" class="btn-refine" data-type="story" data-input="story-plot" title="Refine story plot and conflict arc">
+                                <span>✨ Refine Plot</span>
+                            </button>
+                        </div>
+                        <textarea id="story-plot" placeholder="Describe the incident that sets the story in motion, character stakes, and major turning points..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="story-source">Reference Link / Lore Inspiration (optional)</label>
+                        <input id="story-source" type="url" placeholder="https://example.com/world-building-notes">
+                    </div>
+
+                    <button class="generate-btn" type="submit" id="btn-generate-story">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <span>Write Complete Story</span>
+                    </button>
                 </form>
                 <div id="story-result"></div>
             </div>
         </section>
+
+        <!-- LEARNWORK / ADAPTIVE COURSE TAB -->
+        <section id="learning-tab" class="tab-content">
+            <div class="form-container">
+                <div class="form-header">
+                    <h2>LearnWork — Adaptive Curriculum & Study Guide</h2>
+                    <p class="form-subtitle">Generate structured educational modules with practical exercises and interactive knowledge check quizzes.</p>
+                </div>
+
+                <div class="preset-section">
+                    <span class="preset-label">Quick course templates:</span>
+                    <div class="preset-buttons">
+                        <button type="button" class="preset-btn" data-target="learning" data-topic="Full-Stack System Architecture & Scalable Microservices" data-level="Intermediate" data-modules="3" data-tone="Pragmatic & Code-First">System Design</button>
+                        <button type="button" class="preset-btn" data-target="learning" data-topic="Generative AI Engineering & LLM Application Development" data-level="Advanced" data-modules="4" data-tone="Deep-Dive Conceptual">GenAI Engineering</button>
+                        <button type="button" class="preset-btn" data-target="learning" data-topic="Cloud Native Security & Zero Trust Architecture" data-level="Beginner" data-modules="3" data-tone="Executive & Strategic">Cloud Security</button>
+                    </div>
+                </div>
+
+                <form id="learning-form">
+                    <div class="form-group">
+                        <div class="label-row">
+                            <label for="learning-topic">Course / Subject Topic <span class="required">*</span></label>
+                            <button type="button" class="btn-refine" data-type="learning" data-input="learning-topic" title="Refine course curriculum topic">
+                                <span>✨ Refine Topic</span>
+                            </button>
+                        </div>
+                        <input id="learning-topic" type="text" placeholder="e.g. Distributed Database Consistency and Consensus Protocols" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group flex-1">
+                            <label for="learning-level">Target Proficiency Level</label>
+                            <select id="learning-level">
+                                <option value="Beginner">Beginner (Foundational)</option>
+                                <option value="Intermediate" selected>Intermediate (Practitioner)</option>
+                                <option value="Advanced">Advanced (Specialist / Lead)</option>
+                            </select>
+                        </div>
+                        <div class="form-group flex-1">
+                            <label for="learning-modules">Module Count</label>
+                            <select id="learning-modules">
+                                <option value="2">2 Modules (Quick Sprint)</option>
+                                <option value="3" selected>3 Modules (Standard Guide)</option>
+                                <option value="4">4 Modules (In-Depth Course)</option>
+                                <option value="5">5 Modules (Comprehensive Mastery)</option>
+                            </select>
+                        </div>
+                        <div class="form-group flex-1">
+                            <label for="learning-tone">Instructional Style</label>
+                            <select id="learning-tone">
+                                <option value="Pragmatic & Code-First">Pragmatic & Code-First</option>
+                                <option value="Deep-Dive Conceptual">Deep-Dive Conceptual</option>
+                                <option value="Executive & Strategic">Executive & Strategic</option>
+                                <option value="Interactive Socratic">Interactive Socratic</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="learning-source">Source Link / Syllabus Reference (optional)</label>
+                        <input id="learning-source" type="url" placeholder="https://example.com/curriculum-reference">
+                    </div>
+
+                    <button class="generate-btn" type="submit" id="btn-generate-learning">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path><polyline points="9 9 12 12 15 9"></polyline></svg>
+                        <span>Build Curriculum & Quiz</span>
+                    </button>
+                </form>
+                <div id="learning-result"></div>
+            </div>
+        </section>
+
+        <!-- SAVINGS & TAX ACCOUNT TAB -->
+        <section id="savings-tab" class="tab-content">
+            <div class="savings-container">
+                
+                <!-- Account ID & Status Banner -->
+                <div class="account-id-card">
+                    <div class="account-id-header">
+                        <div class="account-id-title-group">
+                            <div class="account-icon-badge">
+                                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                            </div>
+                            <div>
+                                <h2 id="savings-account-title">Personal Savings & Tax Record</h2>
+                                <p class="account-holder-sub" id="savings-holder-sub">Authenticated Account Ledger & IRS/TIN Identification</p>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="account-status-pill guest" id="savings-status-badge">
+                                <span class="status-dot"></span> <span id="savings-status-text">Guest View</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Identification Metadata Chips -->
+                    <div class="id-chips-grid">
+                        <div class="id-chip">
+                            <div class="id-chip-label">Account Identifier #</div>
+                            <div class="id-chip-value">
+                                <span id="chip-account-num">Sign in to view</span>
+                                <button type="button" class="copy-btn-tiny" id="btn-copy-acc-num" title="Copy Account Number">Copy</button>
+                            </div>
+                        </div>
+                        <div class="id-chip">
+                            <div class="id-chip-label">Tax ID (TIN / EIN)</div>
+                            <div class="id-chip-value">
+                                <span id="chip-tax-id">Sign in to view</span>
+                                <button type="button" class="copy-btn-tiny" id="btn-copy-tax-id" title="Copy Tax ID">Copy</button>
+                            </div>
+                        </div>
+                        <div class="id-chip">
+                            <div class="id-chip-label">Interest Yield Rate</div>
+                            <div class="id-chip-value">
+                                <span id="chip-interest-rate">4.50% APY</span>
+                            </div>
+                        </div>
+                        <div class="id-chip">
+                            <div class="id-chip-label">Tax Withholding Rate</div>
+                            <div class="id-chip-value">
+                                <span id="chip-tax-rate">15.00% Standard</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Guest / Logged-out Banner (Toggled dynamically) -->
+                <div class="guest-auth-notice" id="savings-guest-notice">
+                    <div class="guest-notice-text">
+                        <h3>🔒 You are viewing in Logged-Out Mode</h3>
+                        <p>Sign in to your AllHub account to access your live personal savings balance, execute deposits/withdrawals, compound interest, and download your verified tax statements.</p>
+                    </div>
+                    <div class="guest-notice-actions">
+                        <button type="button" class="action-btn-primary" id="btn-savings-login">Sign In / Register</button>
+                    </div>
+                </div>
+
+                <!-- Account Record Lookup / Identification Search -->
+                <div class="lookup-box">
+                    <div class="action-card-header">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <h3>Account & Tax Identification Lookup</h3>
+                    </div>
+                    <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 12px;">
+                        Quickly verify or look up any savings account record and tax profile by Account Number (e.g. <code>AH-SAV-XXXX-XXXX</code>), Tax ID (<code>TIN-XXX-XX-XXXX</code>), or registered email.
+                    </p>
+                    <form id="form-account-lookup" class="lookup-form">
+                        <input type="text" id="lookup-identifier-input" placeholder="Enter Account Number, Tax ID (TIN), or Email..." required>
+                        <button type="submit" class="action-btn-primary" id="btn-lookup-submit">
+                            <span>🔍 Search Record</span>
+                        </button>
+                    </form>
+                    <div id="lookup-result-box" style="margin-top: 14px; display: none;"></div>
+                </div>
+
+                <!-- Financial & Tax Metrics Grid -->
+                <div class="metrics-grid">
+                    <div class="metric-card highlight">
+                        <div class="metric-header">
+                            <span class="metric-title">Savings Balance</span>
+                            <span class="metric-badge green" id="metric-balance-badge">USD</span>
+                        </div>
+                        <div class="metric-value" id="metric-balance-val">$0.00</div>
+                        <div class="metric-sub" id="metric-balance-sub">Available active funds</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-title">Total Deposited</span>
+                            <span class="metric-badge green">Credits</span>
+                        </div>
+                        <div class="metric-value" id="metric-deposited-val">$0.00</div>
+                        <div class="metric-sub">Cumulative gross deposits</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-title">Total Withdrawn</span>
+                            <span class="metric-badge red">Debits</span>
+                        </div>
+                        <div class="metric-value" id="metric-withdrawn-val">$0.00</div>
+                        <div class="metric-sub">Cumulative disbursements</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-title">Gross Interest</span>
+                            <span class="metric-badge indigo">Accrued</span>
+                        </div>
+                        <div class="metric-value" id="metric-gross-interest-val">$0.00</div>
+                        <div class="metric-sub">Pre-tax interest earnings</div>
+                    </div>
+
+                    <div class="metric-card tax-highlight">
+                        <div class="metric-header">
+                            <span class="metric-title">Tax Withheld</span>
+                            <span class="metric-badge red">IRS / TIN</span>
+                        </div>
+                        <div class="metric-value" id="metric-tax-withheld-val">$0.00</div>
+                        <div class="metric-sub">Withholding tax deductions</div>
+                    </div>
+
+                    <div class="metric-card highlight">
+                        <div class="metric-header">
+                            <span class="metric-title">Net Interest Yield</span>
+                            <span class="metric-badge green">Post-Tax</span>
+                        </div>
+                        <div class="metric-value" id="metric-net-interest-val">$0.00</div>
+                        <div class="metric-sub">Net credited to balance</div>
+                    </div>
+                </div>
+
+                <!-- Actions Grid: Deposit, Withdraw, Accrue Interest -->
+                <div class="actions-layout">
+                    <!-- Deposit Action -->
+                    <div class="action-card">
+                        <div class="action-card-header">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"></path></svg>
+                            <h3>Deposit Funds</h3>
+                        </div>
+                        <form id="form-deposit">
+                            <div class="form-group">
+                                <label for="deposit-amount">Deposit Amount ($ USD) <span class="required">*</span></label>
+                                <input id="deposit-amount" type="number" step="0.01" min="1" placeholder="e.g. 250.00" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="deposit-note">Transaction Memo / Note</label>
+                                <input id="deposit-note" type="text" placeholder="e.g. Monthly automated savings transfer">
+                            </div>
+                            <button type="submit" class="action-btn-primary" id="btn-submit-deposit">
+                                <span>Deposit to Savings</span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Withdraw Action -->
+                    <div class="action-card">
+                        <div class="action-card-header">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"></path></svg>
+                            <h3>Withdraw Funds</h3>
+                        </div>
+                        <form id="form-withdraw">
+                            <div class="form-group">
+                                <label for="withdraw-amount">Withdrawal Amount ($ USD) <span class="required">*</span></label>
+                                <input id="withdraw-amount" type="number" step="0.01" min="1" placeholder="e.g. 100.00" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="withdraw-note">Transaction Memo / Note</label>
+                                <input id="withdraw-note" type="text" placeholder="e.g. Emergency fund withdrawal">
+                            </div>
+                            <button type="submit" class="action-btn-danger" id="btn-submit-withdraw">
+                                <span>Withdraw Funds</span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Interest Accrual & Tax Calculator -->
+                    <div class="action-card">
+                        <div class="action-card-header">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            <h3>Compound Interest & Tax</h3>
+                        </div>
+                        <form id="form-accrue-interest">
+                            <div class="form-row">
+                                <div class="form-group flex-1">
+                                    <label for="interest-apy">APY Yield Rate (%)</label>
+                                    <input id="interest-apy" type="number" step="0.1" min="0.1" max="25" value="4.5">
+                                </div>
+                                <div class="form-group flex-1">
+                                    <label for="tax-withholding-rate">Tax Rate (%)</label>
+                                    <input id="tax-withholding-rate" type="number" step="1" min="0" max="50" value="15">
+                                </div>
+                            </div>
+                            <span class="input-hint">Calculates monthly compound yield on current balance and automatically deducts required tax withholding.</span>
+                            <button type="submit" class="action-btn-primary" id="btn-submit-accrue">
+                                <span>✨ Accrue Interest & Deduct Tax</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Official Tax Statement & Summary -->
+                <div class="tax-statement-card" id="tax-statement-card">
+                    <div class="tax-statement-header">
+                        <div>
+                            <h3 style="font-size: 1.15rem; font-weight: 700; color: #fff; margin: 0;">Official Form 1099-INT Tax Summary Statement</h3>
+                            <p style="font-size: 0.85rem; color: #94a3b8; margin-top: 2px;" id="tax-statement-subtitle">Annual Tax Year 2026 Summary Record</p>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button type="button" class="btn-tool-action" id="btn-refresh-tax">
+                                🔄 Refresh Report
+                            </button>
+                            <button type="button" class="btn-tool-action" id="btn-print-tax">
+                                🖨️ Print / Save PDF
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="tax-summary-rows">
+                        <div class="tax-row">
+                            <span class="tax-row-label">Account Holder & Tax ID (TIN):</span>
+                            <span class="tax-row-value" id="tax-holder-val">—</span>
+                        </div>
+                        <div class="tax-row">
+                            <span class="tax-row-label">Box 1: Total Interest Income (Gross Taxable):</span>
+                            <span class="tax-row-value" id="tax-box1-val">$0.00</span>
+                        </div>
+                        <div class="tax-row">
+                            <span class="tax-row-label">Box 4: Federal / State Tax Withheld:</span>
+                            <span class="tax-row-value" id="tax-box4-val">$0.00</span>
+                        </div>
+                        <div class="tax-row">
+                            <span class="tax-row-label">Net Credited Post-Tax Yield:</span>
+                            <span class="tax-row-value" id="tax-net-val">$0.00</span>
+                        </div>
+                        <div class="tax-row total">
+                            <span class="tax-row-label">Ending Taxable Account Balance:</span>
+                            <span class="tax-row-value" id="tax-ending-bal-val">$0.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Complete Transaction History Ledger -->
+                <div class="ledger-card">
+                    <div class="ledger-header">
+                        <div>
+                            <h3>Savings Account Transaction History & Ledger</h3>
+                            <p style="font-size: 0.85rem; color: #94a3b8; margin: 0;">Complete audit trail of deposits, withdrawals, interest disbursements, and tax withholdings.</p>
+                        </div>
+                        <div class="ledger-filters">
+                            <button type="button" class="ledger-filter-btn active" data-filter="ALL">All Transactions</button>
+                            <button type="button" class="ledger-filter-btn" data-filter="DEPOSIT">Deposits</button>
+                            <button type="button" class="ledger-filter-btn" data-filter="WITHDRAWAL">Withdrawals</button>
+                            <button type="button" class="ledger-filter-btn" data-filter="INTEREST">Interest & Tax</button>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="ledger-table">
+                            <thead>
+                                <tr>
+                                    <th>Date & Time</th>
+                                    <th>Type</th>
+                                    <th>Description / Reference</th>
+                                    <th>Gross Amount</th>
+                                    <th>Tax Withheld</th>
+                                    <th>Net Amount</th>
+                                    <th>Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ledger-table-body">
+                                <tr>
+                                    <td colspan="7" style="text-align: center; color: #94a3b8; padding: 24px;">
+                                        Loading savings account history...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </section>
     </main>
 
-    <div id="loading" class="loading-overlay" role="status" aria-live="polite">
-        <div class="spinner"></div>
-        <p>Creating your content...</p>
+    <!-- AUTHENTICATION MODAL -->
+    <div id="auth-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title">
+        <div class="auth-modal-card">
+            <div class="auth-modal-header">
+                <h2 id="auth-modal-title">Sign In to AllHub</h2>
+                <button type="button" class="modal-close-btn" id="btn-close-auth" aria-label="Close modal">&times;</button>
+            </div>
+            <div class="auth-tabs">
+                <button type="button" class="auth-tab-btn active" id="tab-login" data-auth-tab="login">Sign In</button>
+                <button type="button" class="auth-tab-btn" id="tab-register" data-auth-tab="register">Create Account</button>
+            </div>
+            <div class="auth-modal-body">
+                <div id="auth-error" class="auth-error" role="alert"></div>
+
+                <!-- LOGIN FORM -->
+                <form id="form-login">
+                    <div class="form-group">
+                        <label for="login-email">Email Address <span class="required">*</span></label>
+                        <input id="login-email" type="email" placeholder="name@example.com" required autocomplete="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Password <span class="required">*</span></label>
+                        <input id="login-password" type="password" placeholder="Enter your password" required autocomplete="current-password">
+                    </div>
+                    <button type="submit" class="auth-submit-btn" id="btn-submit-login">Sign In</button>
+                    <p class="auth-switch-prompt">Don't have an account yet? <a id="switch-to-register">Register here</a></p>
+                </form>
+
+                <!-- REGISTER FORM -->
+                <form id="form-register" style="display: none;">
+                    <div class="form-group">
+                        <label for="register-name">Full Name <span class="required">*</span></label>
+                        <input id="register-name" type="text" placeholder="e.g. Alex Rivera" required autocomplete="name">
+                    </div>
+                    <div class="form-group">
+                        <label for="register-email">Email Address <span class="required">*</span></label>
+                        <input id="register-email" type="email" placeholder="name@example.com" required autocomplete="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="register-password">Password (min 6 characters) <span class="required">*</span></label>
+                        <input id="register-password" type="password" placeholder="Create a password" required minlength="6" autocomplete="new-password">
+                    </div>
+                    <button type="submit" class="auth-submit-btn" id="btn-submit-register">Create Account</button>
+                    <p class="auth-switch-prompt">Already have an account? <a id="switch-to-login">Sign in here</a></p>
+                </form>
+            </div>
+        </div>
     </div>
+
+    <!-- LOADING OVERLAY WITH PROGRESSIVE STATUS -->
+    <div id="loading" class="loading-overlay" role="status" aria-live="polite">
+        <div class="loading-card">
+            <div class="spinner"></div>
+            <h3 id="loading-title">Generating Publication Content</h3>
+            <p id="loading-status">Connecting to Google Gemini API...</p>
+            <div class="loading-steps">
+                <span class="step-indicator active">1. Prompt Analysis</span>
+                <span class="step-indicator">2. AI Drafting</span>
+                <span class="step-indicator">3. Quality Formatting</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="toast" role="alert">Copied to clipboard!</div>
 
     <script>
         const API = "/api";
+        let authToken = localStorage.getItem("allhub_auth_token") || null;
+        let currentUser = null;
 
+        // --- AUTHENTICATION STATE & UI ---
+        const authBox = document.getElementById("auth-box");
+        const authModal = document.getElementById("auth-modal");
+        const authError = document.getElementById("auth-error");
+        const formLogin = document.getElementById("form-login");
+        const formRegister = document.getElementById("form-register");
+        const tabLogin = document.getElementById("tab-login");
+        const tabRegister = document.getElementById("tab-register");
+        const authModalTitle = document.getElementById("auth-modal-title");
+
+        function updateAuthUI() {
+            if (currentUser) {
+                const initials = (currentUser.name || currentUser.email || "U")
+                    .split(" ")
+                    .map(n => n[0])
+                    .join("")
+                    .substring(0, 2)
+                    .toUpperCase();
+
+                authBox.innerHTML = `
+                    <div class="user-badge-pill">
+                        <span class="user-avatar">${escapeHtml(initials)}</span>
+                        <span>${escapeHtml(currentUser.name || currentUser.email)}</span>
+                        <button type="button" class="btn-signout" id="btn-signout" title="Sign out of account">Sign Out</button>
+                    </div>
+                `;
+                document.getElementById("btn-signout").addEventListener("click", logoutUser);
+            } else {
+                authBox.innerHTML = `
+                    <button class="auth-header-btn" type="button" id="btn-open-auth">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        <span>Sign In / Register</span>
+                    </button>
+                `;
+                document.getElementById("btn-open-auth").addEventListener("click", () => openAuthModal("login"));
+            }
+        }
+
+        function openAuthModal(initialTab = "login") {
+            authError.classList.remove("show");
+            authError.textContent = "";
+            switchAuthTab(initialTab);
+            authModal.classList.add("active");
+        }
+
+        function closeAuthModal() {
+            authModal.classList.remove("active");
+            formLogin.reset();
+            formRegister.reset();
+            authError.classList.remove("show");
+        }
+
+        function switchAuthTab(tab) {
+            authError.classList.remove("show");
+            if (tab === "login") {
+                tabLogin.classList.add("active");
+                tabRegister.classList.remove("active");
+                formLogin.style.display = "block";
+                formRegister.style.display = "none";
+                authModalTitle.textContent = "Sign In to AllHub";
+            } else {
+                tabRegister.classList.add("active");
+                tabLogin.classList.remove("active");
+                formRegister.style.display = "block";
+                formLogin.style.display = "none";
+                authModalTitle.textContent = "Create an Account";
+            }
+        }
+
+        document.getElementById("btn-close-auth").addEventListener("click", closeAuthModal);
+        tabLogin.addEventListener("click", () => switchAuthTab("login"));
+        tabRegister.addEventListener("click", () => switchAuthTab("register"));
+        document.getElementById("switch-to-register").addEventListener("click", () => switchAuthTab("register"));
+        document.getElementById("switch-to-login").addEventListener("click", () => switchAuthTab("login"));
+
+        authModal.addEventListener("click", (e) => {
+            if (e.target === authModal) closeAuthModal();
+        });
+
+        async function fetchUserProfile() {
+            if (!authToken) {
+                updateAuthUI();
+                return;
+            }
+            try {
+                const res = await fetch(`${API}/auth/me`, {
+                    headers: { "Authorization": `Bearer ${authToken}`, "Accept": "application/json" }
+                });
+                const data = await res.json();
+                if (res.ok && data.success && data.user) {
+                    currentUser = data.user;
+                } else {
+                    authToken = null;
+                    localStorage.removeItem("allhub_auth_token");
+                    currentUser = null;
+                }
+            } catch (err) {
+                console.error("Auth check error:", err);
+            }
+            updateAuthUI();
+            if (typeof loadSavingsAccount === "function") {
+                loadSavingsAccount();
+            }
+        }
+
+        formLogin.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const email = document.getElementById("login-email").value.trim();
+            const password = document.getElementById("login-password").value;
+            const btn = document.getElementById("btn-submit-login");
+
+            btn.disabled = true;
+            btn.textContent = "Signing In...";
+            authError.classList.remove("show");
+
+            try {
+                const res = await fetch(`${API}/auth/login`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await res.json();
+                if (!res.ok || !data.success) {
+                    throw new Error(data.error || "Login failed");
+                }
+                authToken = data.token;
+                currentUser = data.user;
+                localStorage.setItem("allhub_auth_token", authToken);
+                closeAuthModal();
+                updateAuthUI();
+                if (typeof loadSavingsAccount === "function") {
+                    loadSavingsAccount();
+                }
+                showToast(`Welcome back, ${currentUser.name || currentUser.email}!`);
+            } catch (err) {
+                authError.textContent = err.message;
+                authError.classList.add("show");
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "Sign In";
+            }
+        });
+
+        formRegister.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const name = document.getElementById("register-name").value.trim();
+            const email = document.getElementById("register-email").value.trim();
+            const password = document.getElementById("register-password").value;
+            const btn = document.getElementById("btn-submit-register");
+
+            btn.disabled = true;
+            btn.textContent = "Creating Account...";
+            authError.classList.remove("show");
+
+            try {
+                const res = await fetch(`${API}/auth/register`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ name, email, password })
+                });
+                const data = await res.json();
+                if (!res.ok || !data.success) {
+                    throw new Error(data.error || "Registration failed");
+                }
+                authToken = data.token;
+                currentUser = data.user;
+                localStorage.setItem("allhub_auth_token", authToken);
+                closeAuthModal();
+                updateAuthUI();
+                if (typeof loadSavingsAccount === "function") {
+                    loadSavingsAccount();
+                }
+                showToast(`Account created! Welcome, ${currentUser.name}!`);
+            } catch (err) {
+                authError.textContent = err.message;
+                authError.classList.add("show");
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "Create Account";
+            }
+        });
+
+        async function logoutUser() {
+            if (authToken) {
+                try {
+                    await fetch(`${API}/auth/logout`, {
+                        method: "POST",
+                        headers: { "Authorization": `Bearer ${authToken}` }
+                    });
+                } catch (e) {
+                    console.error("Logout error", e);
+                }
+            }
+            authToken = null;
+            currentUser = null;
+            localStorage.removeItem("allhub_auth_token");
+            updateAuthUI();
+            if (typeof loadSavingsAccount === "function") {
+                loadSavingsAccount();
+            }
+            showToast("Signed out successfully.");
+        }
+
+        // Initialize Auth Check
+        fetchUserProfile();
+
+        // --- PROMPT REFINEMENT CLIENT LOGIC ---
+        document.querySelectorAll(".btn-refine").forEach((btn) => {
+            btn.addEventListener("click", async () => {
+                const inputId = btn.dataset.input;
+                const type = btn.dataset.type;
+                const inputEl = document.getElementById(inputId);
+                if (!inputEl) return;
+
+                const currentVal = inputEl.value.trim();
+                if (!currentVal) {
+                    showToast("Please enter a basic topic or concept first to refine it.");
+                    inputEl.focus();
+                    return;
+                }
+
+                const originalBtnHtml = btn.innerHTML;
+                btn.disabled = true;
+                btn.innerHTML = `<span>⏳ Refining...</span>`;
+
+                try {
+                    const res = await post("refine-prompt", { prompt: currentVal, type });
+                    if (res && res.refined) {
+                        const { refinedTopic, suggestedKeywords, suggestedTone } = res.refined;
+                        if (refinedTopic) {
+                            inputEl.value = refinedTopic;
+                        }
+                        if (suggestedKeywords) {
+                            if (type === "article" && document.getElementById("article-keywords")) {
+                                document.getElementById("article-keywords").value = suggestedKeywords;
+                            }
+                        }
+                        if (suggestedTone) {
+                            if (type === "article" && document.getElementById("article-tone")) {
+                                const toneSelect = document.getElementById("article-tone");
+                                for (let opt of toneSelect.options) {
+                                    if (opt.value.toLowerCase().includes(suggestedTone.toLowerCase())) {
+                                        toneSelect.value = opt.value;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        showToast("Prompt refined with Google Gemini!");
+                    }
+                } catch (err) {
+                    showToast(`Refinement notice: ${err.message}`);
+                } finally {
+                    btn.disabled = false;
+                    btn.innerHTML = originalBtnHtml;
+                }
+            });
+        });
+
+        // Tab Switching
         document.querySelectorAll(".tab-btn").forEach((button) => {
             button.addEventListener("click", () => {
                 const tab = button.dataset.tab;
                 document.querySelectorAll(".tab-btn").forEach((item) => item.classList.toggle("active", item === button));
                 document.querySelectorAll(".tab-content").forEach((section) => section.classList.toggle("active", section.id === `${tab}-tab`));
+                if (tab === "savings" && typeof loadSavingsAccount === "function") {
+                    loadSavingsAccount();
+                }
+            });
+        });
+
+        // Quick Preset Buttons
+        document.querySelectorAll(".preset-btn").forEach((button) => {
+            button.addEventListener("click", () => {
+                const target = button.dataset.target;
+                if (target === "article") {
+                    document.getElementById("article-topic").value = button.dataset.topic || "";
+                    document.getElementById("article-keywords").value = button.dataset.keywords || "";
+                    if (button.dataset.tone) document.getElementById("article-tone").value = button.dataset.tone;
+                } else if (target === "ebook") {
+                    document.getElementById("ebook-title").value = button.dataset.title || "";
+                    document.getElementById("ebook-author").value = button.dataset.author || "";
+                    document.getElementById("ebook-genre").value = button.dataset.genre || "";
+                    document.getElementById("ebook-chapters").value = button.dataset.chapters || "4";
+                    document.getElementById("ebook-description").value = button.dataset.description || "";
+                    if (button.dataset.tone) document.getElementById("ebook-tone").value = button.dataset.tone;
+                } else if (target === "story") {
+                    document.getElementById("story-title").value = button.dataset.title || "";
+                    document.getElementById("story-author").value = button.dataset.author || "";
+                    document.getElementById("story-genre").value = button.dataset.genre || "scifi";
+                    document.getElementById("story-length").value = button.dataset.length || "short";
+                    document.getElementById("story-characters").value = button.dataset.characters || "";
+                    document.getElementById("story-plot").value = button.dataset.plot || "";
+                    if (button.dataset.tone) document.getElementById("story-tone").value = button.dataset.tone;
+                } else if (target === "learning") {
+                    document.getElementById("learning-topic").value = button.dataset.topic || "";
+                    if (button.dataset.level) document.getElementById("learning-level").value = button.dataset.level;
+                    if (button.dataset.modules) document.getElementById("learning-modules").value = button.dataset.modules;
+                    if (button.dataset.tone) document.getElementById("learning-tone").value = button.dataset.tone;
+                }
+                showToast("Template loaded into form");
             });
         });
 
@@ -116,22 +1026,152 @@
             }[character]));
         }
 
-        function paragraphs(value, separator = "<br><br>") {
-            return escapeHtml(value).replace(/\r?\n/g, separator);
+        function countWords(text) {
+            if (!text) return 0;
+            const words = String(text).trim().match(/\S+/g);
+            return words ? words.length : 0;
         }
 
-        function setLoading(active) {
-            document.getElementById("loading").classList.toggle("active", active);
+        function calculateReadingTime(wordCount) {
+            const minutes = Math.ceil(wordCount / 200);
+            return minutes <= 1 ? "1 min read" : `${minutes} mins read`;
+        }
+
+        function renderMarkdownToHtml(markdownText) {
+            if (!markdownText) return "";
+            const lines = markdownText.split(/\r?\n/);
+            let html = "";
+            let inList = false;
+
+            for (let i = 0; i < lines.length; i++) {
+                let line = lines[i].trim();
+
+                if (!line) {
+                    if (inList) { html += "</ul>"; inList = false; }
+                    continue;
+                }
+
+                // Headers
+                if (line.startsWith("### ")) {
+                    if (inList) { html += "</ul>"; inList = false; }
+                    html += `<h3>${parseInline(line.slice(4))}</h3>`;
+                } else if (line.startsWith("## ")) {
+                    if (inList) { html += "</ul>"; inList = false; }
+                    html += `<h2>${parseInline(line.slice(3))}</h2>`;
+                } else if (line.startsWith("# ")) {
+                    if (inList) { html += "</ul>"; inList = false; }
+                    html += `<h1>${parseInline(line.slice(2))}</h1>`;
+                } else if (line.startsWith("- ") || line.startsWith("* ")) {
+                    if (!inList) { html += "<ul>"; inList = true; }
+                    html += `<li>${parseInline(line.slice(2))}</li>`;
+                } else if (line.startsWith("> ")) {
+                    if (inList) { html += "</ul>"; inList = false; }
+                    html += `<blockquote>${parseInline(line.slice(2))}</blockquote>`;
+                } else {
+                    if (inList) { html += "</ul>"; inList = false; }
+                    html += `<p>${parseInline(line)}</p>`;
+                }
+            }
+            if (inList) html += "</ul>";
+            return html;
+        }
+
+        function parseInline(text) {
+            let escaped = escapeHtml(text);
+            // Bold
+            escaped = escaped.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            // Italic
+            escaped = escaped.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            // Inline code
+            escaped = escaped.replace(/`([^`]+)`/g, '<code>$1</code>');
+            return escaped;
+        }
+
+        function paragraphs(value) {
+            if (!value) return "";
+            return value.split(/\r?\n\s*\r?\n/)
+                .filter(p => p.trim())
+                .map(p => `<p>${escapeHtml(p).replace(/\r?\n/g, '<br>')}</p>`)
+                .join("");
+        }
+
+        let loadingInterval;
+        function setLoading(active, taskName = "Creating your content") {
+            const overlay = document.getElementById("loading");
+            overlay.classList.toggle("active", active);
+            const statusEl = document.getElementById("loading-status");
+            const steps = document.querySelectorAll(".step-indicator");
+
+            clearInterval(loadingInterval);
+            if (active) {
+                document.getElementById("loading-title").textContent = taskName;
+                statusEl.textContent = "Connecting to Gemini 2.5...";
+                steps[0].classList.add("active");
+                steps[1].classList.remove("active");
+                steps[2].classList.remove("active");
+
+                let step = 0;
+                const messages = [
+                    "Analyzing guidelines and context...",
+                    "Generating natural prose with Gemini...",
+                    "Structuring chapters and section flows...",
+                    "Validating grammar, cadence, and output format..."
+                ];
+                loadingInterval = setInterval(() => {
+                    step = (step + 1) % messages.length;
+                    statusEl.textContent = messages[step];
+                    if (step >= 1) steps[1].classList.add("active");
+                    if (step >= 3) steps[2].classList.add("active");
+                }, 2800);
+            }
+        }
+
+        function showToast(message = "Copied to clipboard!") {
+            const toast = document.getElementById("toast");
+            toast.textContent = message;
+            toast.classList.add("show");
+            setTimeout(() => toast.classList.remove("show"), 2500);
+        }
+
+        function copyText(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast("Content copied to clipboard!");
+            }).catch(() => {
+                showToast("Unable to copy to clipboard");
+            });
         }
 
         function showError(id, message) {
-            document.getElementById(id).innerHTML = `<div class="result-container"><strong>Error:</strong> ${escapeHtml(message)}</div>`;
+            document.getElementById(id).innerHTML = `
+                <div class="result-container error-container">
+                    <div class="error-header">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                        <strong>Generation Notice</strong>
+                    </div>
+                    <p class="error-body">${escapeHtml(message)}</p>
+                    <div class="error-hint">
+                        <strong>Troubleshooting tips:</strong>
+                        <ul>
+                            <li>Ensure <code>GEMINI_API_KEY</code> is properly configured in project settings.</li>
+                            <li>If providing a reference URL, ensure it is publicly accessible without bot-protection blocks.</li>
+                            <li>Try simplifying or refining the topic prompt.</li>
+                        </ul>
+                    </div>
+                </div>`;
         }
 
         async function post(endpoint, payload) {
+            const headers = {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            };
+            if (authToken) {
+                headers["Authorization"] = `Bearer ${authToken}`;
+            }
+
             const response = await fetch(`${API}/${endpoint}`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json", "Accept": "application/json" },
+                headers,
                 body: JSON.stringify(payload)
             });
             const data = await response.json().catch(() => ({}));
@@ -141,8 +1181,8 @@
             return data;
         }
 
-        function downloadText(text, filename) {
-            const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+        function downloadFile(content, filename, type = "text/plain;charset=utf-8") {
+            const blob = new Blob([content], { type });
             const url = URL.createObjectURL(blob);
             const link = document.createElement("a");
             link.href = url;
@@ -156,137 +1196,1024 @@
             return filename || fallback;
         }
 
-        function renderArticle(article) {
+        // ARTICLE RENDERER
+        function renderArticle(article, topic) {
+            const words = countWords(article);
+            const readTime = calculateReadingTime(words);
+            const htmlContent = renderMarkdownToHtml(article);
+
             const result = document.getElementById("article-result");
             result.innerHTML = `
-                <div class="result-container">
-                    <div class="article-output"><pre style="white-space:pre-wrap;font:inherit;">${escapeHtml(article)}</pre></div>
-                    <div class="download-links">
-                        <button class="download-btn" type="button" id="download-article">Download article</button>
+                <div class="result-container" id="article-output-card">
+                    <div class="result-header-bar">
+                        <div class="meta-pills">
+                            <span class="meta-pill">${words.toLocaleString()} words</span>
+                            <span class="meta-pill">${readTime}</span>
+                            <span class="meta-pill badge-green">Ready to Publish</span>
+                        </div>
+                        <div class="quick-actions">
+                            <button class="action-btn" type="button" id="copy-article-btn">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                <span>Copy Text</span>
+                            </button>
+                            <button class="action-btn" type="button" onclick="window.print()">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                                <span>Print / PDF</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="article-formatted-body">
+                        ${htmlContent}
+                    </div>
+
+                    <div class="download-section">
+                        <span class="download-label">Export Article:</span>
+                        <div class="download-links">
+                            <button class="download-btn" type="button" id="download-article-txt">Download .TXT</button>
+                            <button class="download-btn secondary" type="button" id="download-article-md">Download .MD</button>
+                            <button class="download-btn secondary" type="button" id="download-article-html">Download .HTML</button>
+                        </div>
                     </div>
                 </div>`;
-            document.getElementById("download-article").addEventListener("click", () => downloadText(article, "article.txt"));
+
+            const filename = safeFilename(topic, "article");
+            document.getElementById("copy-article-btn").addEventListener("click", () => copyText(article));
+            document.getElementById("download-article-txt").addEventListener("click", () => downloadFile(article, `${filename}.txt`));
+            document.getElementById("download-article-md").addEventListener("click", () => downloadFile(article, `${filename}.md`, "text/markdown;charset=utf-8"));
+            document.getElementById("download-article-html").addEventListener("click", () => {
+                const fullHtml = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${escapeHtml(topic)}</title><style>body{font-family:system-ui,-apple-system,sans-serif;line-height:1.7;max-width:800px;margin:40px auto;padding:0 20px;color:#1e293b;}h1,h2,h3{color:#0f172a;}blockquote{border-left:4px solid #6366f1;margin-left:0;padding-left:16px;color:#64748b;}</style></head><body>${htmlContent}</body></html>`;
+                downloadFile(fullHtml, `${filename}.html`, "text/html;charset=utf-8");
+            });
         }
 
+        // EBOOK RENDERER
         function renderEbook(book) {
-            const chapters = (book.chapters || []).map((chapter) => `
-                <article class="chapter">
+            let totalWords = countWords(book.introduction) + countWords(book.conclusion);
+            (book.chapters || []).forEach(c => { totalWords += countWords(c.content); });
+            const totalReadTime = calculateReadingTime(totalWords);
+
+            const tocItems = (book.chapters || []).map((ch, idx) => `
+                <li><a href="#ebook-chapter-${idx+1}">${idx+1}. ${escapeHtml(ch.title)}</a></li>
+            `).join("");
+
+            const chaptersHtml = (book.chapters || []).map((chapter, idx) => `
+                <article class="chapter" id="ebook-chapter-${idx+1}">
+                    <div class="chapter-badge">Chapter ${idx+1}</div>
                     <h3>${escapeHtml(chapter.title)}</h3>
-                    <div>${paragraphs(chapter.content)}</div>
+                    <div class="chapter-content">${paragraphs(chapter.content)}</div>
                 </article>`).join("");
-            document.getElementById("ebook-result").innerHTML = `
-                <div class="result-container">
+
+            const result = document.getElementById("ebook-result");
+            result.innerHTML = `
+                <div class="result-container" id="ebook-output-card">
+                    <div class="result-header-bar">
+                        <div class="meta-pills">
+                            <span class="meta-pill">${(book.chapters || []).length} Chapters</span>
+                            <span class="meta-pill">${totalWords.toLocaleString()} words</span>
+                            <span class="meta-pill">${totalReadTime}</span>
+                        </div>
+                        <div class="quick-actions">
+                            <button class="action-btn" type="button" id="copy-ebook-btn">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                <span>Copy Book</span>
+                            </button>
+                            <button class="action-btn" type="button" onclick="window.print()">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                                <span>Print / PDF</span>
+                            </button>
+                        </div>
+                    </div>
+
                     <div class="book-content ebook-preview">
-                        <div class="book-header">
+                        <div class="book-cover-page">
                             <div class="book-title">${escapeHtml(book.title)}</div>
-                            <div class="book-meta">by ${escapeHtml(book.author)}</div>
-                            <div class="book-meta">${escapeHtml(book.publisher)}</div>
-                            <div class="book-meta">${escapeHtml(book.isbn)}</div>
+                            <div class="book-subtitle-author">by <strong>${escapeHtml(book.author)}</strong></div>
+                            <div class="book-meta-footer">
+                                <div>${escapeHtml(book.publisher)}</div>
+                                <div class="isbn-notice">${escapeHtml(book.isbn)}</div>
+                            </div>
                         </div>
-                        <div class="copyright-page"><strong>${escapeHtml(book.copyright)}</strong><br><br>${paragraphs(book.legal)}<br><br><em>First Edition</em></div>
-                        <div class="dedication">${paragraphs(book.dedication)}</div>
-                        <h2>Introduction</h2>
-                        <div>${paragraphs(book.introduction)}</div>
-                        ${chapters}
-                        <h2>Conclusion</h2>
-                        <div>${paragraphs(book.conclusion)}</div>
-                        <div class="dedication"><strong>THE END</strong></div>
+
+                        <div class="copyright-page">
+                            <div class="copyright-header">${escapeHtml(book.copyright)}</div>
+                            <div class="legal-notice">${paragraphs(book.legal)}</div>
+                            <div class="edition-notice"><em>First Digital Edition</em></div>
+                        </div>
+
+                        ${book.dedication ? `<div class="dedication"><strong>Dedication</strong><p>${paragraphs(book.dedication)}</p></div>` : ""}
+
+                        <div class="toc-section">
+                            <h2>Table of Contents</h2>
+                            <ul class="toc-list">
+                                <li><a href="#ebook-intro">Introduction</a></li>
+                                ${tocItems}
+                                <li><a href="#ebook-conclusion">Conclusion</a></li>
+                            </ul>
+                        </div>
+
+                        <section id="ebook-intro" class="book-section">
+                            <h2>Introduction</h2>
+                            <div class="section-prose">${paragraphs(book.introduction)}</div>
+                        </section>
+
+                        ${chaptersHtml}
+
+                        <section id="ebook-conclusion" class="book-section">
+                            <h2>Conclusion</h2>
+                            <div class="section-prose">${paragraphs(book.conclusion)}</div>
+                        </section>
+
+                        <div class="the-end-block">❖ THE END ❖</div>
                     </div>
-                    <div class="download-links">
-                        <button class="download-btn" type="button" id="download-ebook">Download book</button>
+
+                    <div class="download-section">
+                        <span class="download-label">Export Complete eBook:</span>
+                        <div class="download-links">
+                            <button class="download-btn" type="button" id="download-ebook-txt">Download .TXT</button>
+                            <button class="download-btn secondary" type="button" id="download-ebook-md">Download .MD</button>
+                            <button class="download-btn secondary" type="button" id="download-ebook-html">Download .HTML eBook</button>
+                        </div>
                     </div>
                 </div>`;
-            document.getElementById("download-ebook").addEventListener("click", () => {
-                let text = `${book.title}\n\nby ${book.author}\n${book.publisher}\n${book.copyright}\n${book.isbn}\n\nDEDICATION\n${book.dedication}\n\nINTRODUCTION\n${book.introduction}\n\n`;
-                (book.chapters || []).forEach((chapter) => { text += `\n\n${chapter.title}\n\n${chapter.content}`; });
-                text += `\n\nCONCLUSION\n${book.conclusion}`;
-                downloadText(text, `${safeFilename(book.title, "ebook")}.txt`);
+
+            function getFullBookText() {
+                let text = `${book.title}\n\nby ${book.author}\n${book.publisher}\n${book.copyright}\n\n${book.isbn}\n\n`;
+                if (book.dedication) text += `DEDICATION:\n${book.dedication}\n\n`;
+                text += `=====================================\nINTRODUCTION\n=====================================\n${book.introduction}\n\n`;
+                (book.chapters || []).forEach((ch, i) => {
+                    text += `=====================================\nCHAPTER ${i+1}: ${ch.title}\n=====================================\n${ch.content}\n\n`;
+                });
+                text += `=====================================\nCONCLUSION\n=====================================\n${book.conclusion}\n\nTHE END\n`;
+                return text;
+            }
+
+            function getFullBookMarkdown() {
+                let md = `# ${book.title}\n\n**by ${book.author}**\n\n*${book.publisher}*\n*${book.copyright}*\n*${book.isbn}*\n\n---\n\n`;
+                if (book.dedication) md += `### Dedication\n\n> ${book.dedication}\n\n---\n\n`;
+                md += `## Introduction\n\n${book.introduction}\n\n---\n\n`;
+                (book.chapters || []).forEach((ch, i) => {
+                    md += `## Chapter ${i+1}: ${ch.title}\n\n${ch.content}\n\n---\n\n`;
+                });
+                md += `## Conclusion\n\n${book.conclusion}\n\n**THE END**\n`;
+                return md;
+            }
+
+            const filename = safeFilename(book.title, "ebook");
+            document.getElementById("copy-ebook-btn").addEventListener("click", () => copyText(getFullBookText()));
+            document.getElementById("download-ebook-txt").addEventListener("click", () => downloadFile(getFullBookText(), `${filename}.txt`));
+            document.getElementById("download-ebook-md").addEventListener("click", () => downloadFile(getFullBookMarkdown(), `${filename}.md`, "text/markdown;charset=utf-8"));
+            document.getElementById("download-ebook-html").addEventListener("click", () => {
+                const fullHtml = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${escapeHtml(book.title)}</title><style>body{font-family:Georgia,serif;line-height:1.8;max-width:750px;margin:40px auto;padding:0 30px;color:#222;}h1,h2,h3{text-align:center;}article{margin:40px 0;page-break-inside:avoid;}.cover{text-align:center;padding:60px 0;border-bottom:2px solid #ccc;}</style></head><body><div class="cover"><h1>${escapeHtml(book.title)}</h1><p>by ${escapeHtml(book.author)}</p><p><small>${escapeHtml(book.publisher)} • ${escapeHtml(book.copyright)}</small></p></div><h2>Introduction</h2><p>${paragraphs(book.introduction)}</p>${chaptersHtml}<h2>Conclusion</h2><p>${paragraphs(book.conclusion)}</p></body></html>`;
+                downloadFile(fullHtml, `${filename}.html`, "text/html;charset=utf-8");
             });
         }
 
+        // STORY RENDERER
         function renderStory(story, genre) {
-            const parts = (story.parts || []).map((part) => `
-                <article class="chapter">
+            let totalWords = countWords(story.dedication);
+            (story.parts || []).forEach(p => { totalWords += countWords(p.content); });
+            const totalReadTime = calculateReadingTime(totalWords);
+
+            const tocItems = (story.parts || []).map((p, idx) => `
+                <li><a href="#story-part-${idx+1}">Part ${idx+1}: ${escapeHtml(p.title)}</a></li>
+            `).join("");
+
+            const partsHtml = (story.parts || []).map((part, idx) => `
+                <article class="chapter" id="story-part-${idx+1}">
+                    <div class="chapter-badge">Part ${idx+1}</div>
                     <h3>${escapeHtml(part.title)}</h3>
-                    <div>${paragraphs(part.content)}</div>
+                    <div class="chapter-content">${paragraphs(part.content)}</div>
                 </article>`).join("");
-            document.getElementById("story-result").innerHTML = `
-                <div class="result-container">
-                    <div class="book-content story-preview">
-                        <div class="book-header">
-                            <div class="book-title">${escapeHtml(story.title)}</div>
-                            <div class="book-meta">A ${escapeHtml(genre)} story by ${escapeHtml(story.author)}</div>
-                            <div class="book-meta">${escapeHtml(story.copyright)}</div>
+
+            const result = document.getElementById("story-result");
+            result.innerHTML = `
+                <div class="result-container" id="story-output-card">
+                    <div class="result-header-bar">
+                        <div class="meta-pills">
+                            <span class="meta-pill uppercase">${escapeHtml(genre)} Fiction</span>
+                            <span class="meta-pill">${(story.parts || []).length} Parts</span>
+                            <span class="meta-pill">${totalWords.toLocaleString()} words</span>
+                            <span class="meta-pill">${totalReadTime}</span>
                         </div>
-                        <div class="dedication">${paragraphs(story.dedication)}</div>
-                        <h2>Contents</h2>
-                        <div>${(story.tableOfContents || []).map(escapeHtml).join("<br>")}</div>
-                        ${parts}
-                        <div class="dedication"><strong>THE END</strong></div>
+                        <div class="quick-actions">
+                            <button class="action-btn" type="button" id="copy-story-btn">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                <span>Copy Story</span>
+                            </button>
+                            <button class="action-btn" type="button" onclick="window.print()">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                                <span>Print / PDF</span>
+                            </button>
+                        </div>
                     </div>
-                    <div class="download-links">
-                        <button class="download-btn" type="button" id="download-story">Download story</button>
+
+                    <div class="book-content story-preview">
+                        <div class="book-cover-page">
+                            <div class="book-title">${escapeHtml(story.title)}</div>
+                            <div class="book-subtitle-author">A ${escapeHtml(genre)} story by <strong>${escapeHtml(story.author)}</strong></div>
+                            <div class="book-meta-footer">
+                                <div>${escapeHtml(story.copyright)}</div>
+                            </div>
+                        </div>
+
+                        ${story.dedication ? `<div class="dedication"><strong>Dedication</strong><p>${paragraphs(story.dedication)}</p></div>` : ""}
+
+                        <div class="toc-section">
+                            <h2>Contents</h2>
+                            <ul class="toc-list">
+                                ${tocItems}
+                            </ul>
+                        </div>
+
+                        ${partsHtml}
+
+                        <div class="the-end-block">❖ THE END ❖</div>
+                    </div>
+
+                    <div class="download-section">
+                        <span class="download-label">Export Story:</span>
+                        <div class="download-links">
+                            <button class="download-btn" type="button" id="download-story-txt">Download .TXT</button>
+                            <button class="download-btn secondary" type="button" id="download-story-md">Download .MD</button>
+                            <button class="download-btn secondary" type="button" id="download-story-html">Download .HTML</button>
+                        </div>
                     </div>
                 </div>`;
-            document.getElementById("download-story").addEventListener("click", () => {
-                let text = `${story.title}\n\nA Story by ${story.author}\n${story.copyright}\n\nDEDICATION\n${story.dedication}\n\nCONTENTS\n${(story.tableOfContents || []).join("\n")}\n\n`;
-                (story.parts || []).forEach((part) => { text += `\n\n${part.title}\n\n${part.content}`; });
-                downloadText(text + "\n\nTHE END", `${safeFilename(story.title, "story")}.txt`);
+
+            function getFullStoryText() {
+                let text = `${story.title}\n\nA ${genre} Story by ${story.author}\n${story.copyright}\n\n`;
+                if (story.dedication) text += `DEDICATION:\n${story.dedication}\n\n`;
+                (story.parts || []).forEach((p, i) => {
+                    text += `=====================================\nPART ${i+1}: ${p.title}\n=====================================\n${p.content}\n\n`;
+                });
+                text += `❖ THE END ❖\n`;
+                return text;
+            }
+
+            function getFullStoryMarkdown() {
+                let md = `# ${story.title}\n\n*A ${genre} Story by ${story.author}*\n*${story.copyright}*\n\n---\n\n`;
+                if (story.dedication) md += `### Dedication\n\n> ${story.dedication}\n\n---\n\n`;
+                (story.parts || []).forEach((p, i) => {
+                    md += `## Part ${i+1}: ${p.title}\n\n${p.content}\n\n---\n\n`;
+                });
+                md += `**THE END**\n`;
+                return md;
+            }
+
+            const filename = safeFilename(story.title, "story");
+            document.getElementById("copy-story-btn").addEventListener("click", () => copyText(getFullStoryText()));
+            document.getElementById("download-story-txt").addEventListener("click", () => downloadFile(getFullStoryText(), `${filename}.txt`));
+            document.getElementById("download-story-md").addEventListener("click", () => downloadFile(getFullStoryMarkdown(), `${filename}.md`, "text/markdown;charset=utf-8"));
+            document.getElementById("download-story-html").addEventListener("click", () => {
+                const fullHtml = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${escapeHtml(story.title)}</title><style>body{font-family:Georgia,serif;line-height:1.8;max-width:750px;margin:40px auto;padding:0 30px;color:#222;}h1,h2,h3{text-align:center;}article{margin:40px 0;}</style></head><body><h1>${escapeHtml(story.title)}</h1><p style="text-align:center;">by ${escapeHtml(story.author)}</p>${partsHtml}</body></html>`;
+                downloadFile(fullHtml, `${filename}.html`, "text/html;charset=utf-8");
             });
         }
 
+        // RENDER LEARNWORK / ADAPTIVE COURSE
+        function renderLearning(learning, topic) {
+            const container = document.getElementById("learning-result");
+            const totalModules = learning.modules ? learning.modules.length : 0;
+            const quizQuestions = learning.quiz || [];
+            
+            // Build modules HTML
+            let modulesHtml = "";
+            (learning.modules || []).forEach((m, idx) => {
+                modulesHtml += `
+                    <div class="learning-module-section" id="module-${idx+1}">
+                        <div class="module-header-row">
+                            <span class="module-num-badge">Module ${m.moduleNumber || idx+1}</span>
+                            <h2>${escapeHtml(m.title)}</h2>
+                        </div>
+                        <p class="module-summary">${escapeHtml(m.summary)}</p>
+                        <div class="module-body">
+                            ${m.inDepthContent ? m.inDepthContent.split(/\n\n+/).map(p => `<p>${escapeHtml(p)}</p>`).join("") : ""}
+                        </div>
+                        ${m.practicalExercise ? `
+                        <div class="exercise-container">
+                            <div class="exercise-header">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+                                <span>Practical Exercise: ${escapeHtml(m.practicalExercise.title)}</span>
+                            </div>
+                            <p class="exercise-instructions">${escapeHtml(m.practicalExercise.instructions)}</p>
+                            <button type="button" class="solution-toggle-btn" data-toggle="solution-${idx+1}">Show Solution & Code</button>
+                            <div class="solution-box" id="solution-${idx+1}">
+                                <strong>Solution & Best Practice:</strong>
+                                <p style="margin-top:6px; white-space:pre-wrap;">${escapeHtml(m.practicalExercise.solutionOrAnswer)}</p>
+                            </div>
+                        </div>` : ""}
+                    </div>`;
+            });
+
+            // Build Quiz HTML
+            let quizHtml = "";
+            if (quizQuestions.length > 0) {
+                quizHtml += `
+                    <div class="quiz-section">
+                        <div class="quiz-header">
+                            <div>
+                                <h2>Knowledge Assessment & Mastery Quiz</h2>
+                                <p style="color:#64748b; font-size:0.9rem;">Test your comprehension across key course milestones</p>
+                            </div>
+                            <span class="quiz-score-pill" id="quiz-score-display">0 / ${quizQuestions.length} Answered</span>
+                        </div>
+                        <div class="quiz-questions-wrap">`;
+
+                quizQuestions.forEach((q, qIndex) => {
+                    quizHtml += `
+                        <div class="quiz-question-card" data-qindex="${qIndex}" data-correct="${q.correctIndex}">
+                            <p class="question-prompt">${qIndex + 1}. ${escapeHtml(q.question)}</p>
+                            <div class="quiz-options-list">
+                                ${(q.options || []).map((opt, optIndex) => `
+                                    <button type="button" class="quiz-option-btn" data-q="${qIndex}" data-opt="${optIndex}">
+                                        <span style="font-weight:700; width:24px;">${String.fromCharCode(65 + optIndex)}.</span>
+                                        <span>${escapeHtml(opt)}</span>
+                                    </button>
+                                `).join("")}
+                            </div>
+                            <div class="quiz-explanation" id="quiz-exp-${qIndex}">
+                                <strong>Explanation:</strong> ${escapeHtml(q.explanation)}
+                            </div>
+                        </div>`;
+                });
+
+                quizHtml += `</div></div>`;
+            }
+
+            container.innerHTML = `
+                <div class="result-container">
+                    <div class="result-header-bar">
+                        <div class="meta-pills">
+                            <span class="meta-pill badge-green">Courseware Ready</span>
+                            <span class="meta-pill">${totalModules} Modules</span>
+                            <span class="meta-pill uppercase">${escapeHtml(learning.targetLevel || "Intermediate")}</span>
+                            ${learning.estimatedDuration ? `<span class="meta-pill">${escapeHtml(learning.estimatedDuration)}</span>` : ""}
+                        </div>
+                        <div class="quick-actions">
+                            <button class="action-btn" type="button" id="copy-learning-btn">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                <span>Copy Course</span>
+                            </button>
+                            <button class="action-btn" type="button" onclick="window.print()">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                                <span>Print / PDF</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="learning-content">
+                        <div class="course-hero">
+                            <h1>${escapeHtml(learning.title)}</h1>
+                            <div class="course-meta-tags">
+                                <span class="course-badge">Level: ${escapeHtml(learning.targetLevel || "Intermediate")}</span>
+                                ${learning.estimatedDuration ? `<span class="course-badge">Duration: ${escapeHtml(learning.estimatedDuration)}</span>` : ""}
+                            </div>
+                            <p class="course-overview">${escapeHtml(learning.overview)}</p>
+                            
+                            ${learning.learningObjectives && learning.learningObjectives.length > 0 ? `
+                            <div class="objectives-card">
+                                <h3>Key Learning Objectives</h3>
+                                <ul>
+                                    ${learning.learningObjectives.map(obj => `<li>${escapeHtml(obj)}</li>`).join("")}
+                                </ul>
+                            </div>` : ""}
+                        </div>
+
+                        ${modulesHtml}
+
+                        ${quizHtml}
+
+                        ${learning.summaryAndNextSteps ? `
+                        <div class="next-steps-card">
+                            <h3>Summary & Mastery Roadmap</h3>
+                            <p>${escapeHtml(learning.summaryAndNextSteps)}</p>
+                        </div>` : ""}
+                    </div>
+
+                    <div class="download-section">
+                        <span class="download-label">Export Courseware:</span>
+                        <div class="download-links">
+                            <button class="download-btn" type="button" id="download-learning-txt">Download .TXT</button>
+                            <button class="download-btn secondary" type="button" id="download-learning-md">Download .MD</button>
+                            <button class="download-btn secondary" type="button" id="download-learning-html">Download .HTML</button>
+                        </div>
+                    </div>
+                </div>`;
+
+            // Setup Solution Toggles
+            container.querySelectorAll(".solution-toggle-btn").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    const targetId = btn.dataset.toggle;
+                    const box = document.getElementById(targetId);
+                    if (box) {
+                        const isVisible = box.classList.contains("show");
+                        box.classList.toggle("show", !isVisible);
+                        btn.textContent = isVisible ? "Show Solution & Code" : "Hide Solution";
+                    }
+                });
+            });
+
+            // Interactive Quiz Logic
+            let score = 0;
+            let answeredCount = 0;
+            const scoreDisplay = document.getElementById("quiz-score-display");
+
+            container.querySelectorAll(".quiz-question-card").forEach(card => {
+                const correctIdx = Number(card.dataset.correct);
+                const qIdx = card.dataset.qindex;
+                const buttons = card.querySelectorAll(".quiz-option-btn");
+                const explanation = document.getElementById(`quiz-exp-${qIdx}`);
+
+                buttons.forEach(btn => {
+                    btn.addEventListener("click", () => {
+                        const chosenOpt = Number(btn.dataset.opt);
+                        buttons.forEach(b => b.disabled = true);
+                        
+                        answeredCount++;
+                        if (chosenOpt === correctIdx) {
+                            btn.classList.add("selected-correct");
+                            score++;
+                        } else {
+                            btn.classList.add("selected-incorrect");
+                            const correctBtn = card.querySelector(`[data-opt="${correctIdx}"]`);
+                            if (correctBtn) correctBtn.classList.add("selected-correct");
+                        }
+
+                        if (explanation) explanation.classList.add("show");
+                        if (scoreDisplay) {
+                            scoreDisplay.textContent = `Score: ${score} / ${quizQuestions.length} Correct`;
+                        }
+                    });
+                });
+            });
+
+            function getFullCourseText() {
+                let text = `${learning.title}\n\nTarget Level: ${learning.targetLevel}\nDuration: ${learning.estimatedDuration || "N/A"}\n\n`;
+                text += `OVERVIEW:\n${learning.overview}\n\n`;
+                if (learning.learningObjectives) {
+                    text += `LEARNING OBJECTIVES:\n` + learning.learningObjectives.map(o => `- ${o}`).join("\n") + "\n\n";
+                }
+                (learning.modules || []).forEach(m => {
+                    text += `=====================================\nMODULE ${m.moduleNumber}: ${m.title}\n=====================================\n${m.summary}\n\n${m.inDepthContent}\n\n`;
+                    if (m.practicalExercise) {
+                        text += `PRACTICAL EXERCISE:\n${m.practicalExercise.title}\n${m.practicalExercise.instructions}\nSolution: ${m.practicalExercise.solutionOrAnswer}\n\n`;
+                    }
+                });
+                if (learning.quiz && learning.quiz.length > 0) {
+                    text += `KNOWLEDGE ASSESSMENT QUIZ:\n`;
+                    learning.quiz.forEach((q, i) => {
+                        text += `${i+1}. ${q.question}\n` + q.options.map((opt, oi) => `   ${String.fromCharCode(65+oi)}. ${opt}`).join("\n") + `\nCorrect: ${String.fromCharCode(65+q.correctIndex)}\nExplanation: ${q.explanation}\n\n`;
+                    });
+                }
+                if (learning.summaryAndNextSteps) {
+                    text += `NEXT STEPS & ROADMAP:\n${learning.summaryAndNextSteps}\n`;
+                }
+                return text;
+            }
+
+            function getFullCourseMarkdown() {
+                let md = `# ${learning.title}\n\n**Target Level:** ${learning.targetLevel} | **Duration:** ${learning.estimatedDuration || "Self-Paced"}\n\n`;
+                md += `## Overview\n\n${learning.overview}\n\n`;
+                if (learning.learningObjectives) {
+                    md += `### Learning Objectives\n\n` + learning.learningObjectives.map(o => `- ${o}`).join("\n") + "\n\n";
+                }
+                (learning.modules || []).forEach(m => {
+                    md += `## Module ${m.moduleNumber}: ${m.title}\n\n*${m.summary}*\n\n${m.inDepthContent}\n\n`;
+                    if (m.practicalExercise) {
+                        md += `### Practical Exercise: ${m.practicalExercise.title}\n\n${m.practicalExercise.instructions}\n\n> **Solution:** ${m.practicalExercise.solutionOrAnswer}\n\n`;
+                    }
+                });
+                if (learning.summaryAndNextSteps) {
+                    md += `## Summary & Next Steps\n\n${learning.summaryAndNextSteps}\n`;
+                }
+                return md;
+            }
+
+            const filename = safeFilename(learning.title, "courseware");
+            document.getElementById("copy-learning-btn").addEventListener("click", () => copyText(getFullCourseText()));
+            document.getElementById("download-learning-txt").addEventListener("click", () => downloadFile(getFullCourseText(), `${filename}.txt`));
+            document.getElementById("download-learning-md").addEventListener("click", () => downloadFile(getFullCourseMarkdown(), `${filename}.md`, "text/markdown;charset=utf-8"));
+            document.getElementById("download-learning-html").addEventListener("click", () => {
+                const fullHtml = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${escapeHtml(learning.title)}</title><style>body{font-family:sans-serif;line-height:1.7;max-width:800px;margin:40px auto;padding:0 30px;color:#1e293b;}h1,h2{color:#0f172a;}code{background:#f1f5f9;padding:2px 6px;border-radius:4px;}</style></head><body><h1>${escapeHtml(learning.title)}</h1>${modulesHtml}</body></html>`;
+                downloadFile(fullHtml, `${filename}.html`, "text/html;charset=utf-8");
+            });
+        }
+
+        // FORM SUBMISSIONS
         document.getElementById("article-form").addEventListener("submit", async (event) => {
             event.preventDefault();
-            const result = document.getElementById("article-result");
-            result.innerHTML = "";
-            setLoading(true);
+            const topic = document.getElementById("article-topic").value.trim();
+            const keywords = document.getElementById("article-keywords").value.trim();
+            const tone = document.getElementById("article-tone").value;
+            const sourceUrl = document.getElementById("article-source").value.trim() || undefined;
+
+            document.getElementById("article-result").innerHTML = "";
+            setLoading(true, "Drafting Article with Gemini");
             try {
-                const data = await post("generate-article", {
-                    topic: document.getElementById("article-topic").value.trim(),
-                    keywords: document.getElementById("article-keywords").value.trim(),
-                    sourceUrl: document.getElementById("article-source").value.trim() || undefined
-                });
-                renderArticle(data.article);
-            } catch (error) { showError("article-result", error.message); }
-            finally { setLoading(false); }
+                const data = await post("generate-article", { topic, keywords, tone, sourceUrl });
+                renderArticle(data.article, topic);
+            } catch (error) {
+                showError("article-result", error.message);
+            } finally {
+                setLoading(false);
+            }
         });
 
         document.getElementById("ebook-form").addEventListener("submit", async (event) => {
             event.preventDefault();
+            const title = document.getElementById("ebook-title").value.trim();
+            const authorName = document.getElementById("ebook-author").value.trim();
+            const genre = document.getElementById("ebook-genre").value.trim();
+            const chapters = Number(document.getElementById("ebook-chapters").value);
+            const tone = document.getElementById("ebook-tone").value;
+            const description = document.getElementById("ebook-description").value.trim();
+            const sourceUrl = document.getElementById("ebook-source").value.trim() || undefined;
+
             document.getElementById("ebook-result").innerHTML = "";
-            setLoading(true);
+            setLoading(true, "Composing Full eBook Architecture");
             try {
-                const data = await post("generate-ebook", {
-                    title: document.getElementById("ebook-title").value.trim(),
-                    authorName: document.getElementById("ebook-author").value.trim(),
-                    genre: document.getElementById("ebook-genre").value.trim(),
-                    chapters: Number(document.getElementById("ebook-chapters").value),
-                    description: document.getElementById("ebook-description").value.trim(),
-                    sourceUrl: document.getElementById("ebook-source").value.trim() || undefined
-                });
+                const data = await post("generate-ebook", { title, authorName, genre, chapters, tone, description, sourceUrl });
                 renderEbook(data.book);
-            } catch (error) { showError("ebook-result", error.message); }
-            finally { setLoading(false); }
+            } catch (error) {
+                showError("ebook-result", error.message);
+            } finally {
+                setLoading(false);
+            }
         });
 
         document.getElementById("story-form").addEventListener("submit", async (event) => {
             event.preventDefault();
-            document.getElementById("story-result").innerHTML = "";
+            const title = document.getElementById("story-title").value.trim();
+            const authorName = document.getElementById("story-author").value.trim();
             const genre = document.getElementById("story-genre").value;
-            setLoading(true);
+            const length = document.getElementById("story-length").value;
+            const tone = document.getElementById("story-tone").value;
+            const characters = document.getElementById("story-characters").value.trim();
+            const plot = document.getElementById("story-plot").value.trim();
+            const sourceUrl = document.getElementById("story-source").value.trim() || undefined;
+
+            document.getElementById("story-result").innerHTML = "";
+            setLoading(true, "Writing Fiction Narrative");
             try {
-                const data = await post("generate-story", {
-                    title: document.getElementById("story-title").value.trim(),
-                    authorName: document.getElementById("story-author").value.trim(),
-                    genre,
-                    length: document.getElementById("story-length").value,
-                    characters: document.getElementById("story-characters").value.trim(),
-                    plot: document.getElementById("story-plot").value.trim(),
-                    sourceUrl: document.getElementById("story-source").value.trim() || undefined
-                });
+                const data = await post("generate-story", { title, authorName, genre, length, tone, characters, plot, sourceUrl });
                 renderStory(data.story, genre);
-            } catch (error) { showError("story-result", error.message); }
-            finally { setLoading(false); }
+            } catch (error) {
+                showError("story-result", error.message);
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        document.getElementById("learning-form").addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const topic = document.getElementById("learning-topic").value.trim();
+            const targetLevel = document.getElementById("learning-level").value;
+            const modulesCount = Number(document.getElementById("learning-modules").value);
+            const tone = document.getElementById("learning-tone").value;
+            const sourceUrl = document.getElementById("learning-source").value.trim() || undefined;
+
+            document.getElementById("learning-result").innerHTML = "";
+            setLoading(true, "Building Adaptive Learning Modules & Quiz");
+            try {
+                const data = await post("generate-learning", { topic, targetLevel, modulesCount, tone, sourceUrl });
+                renderLearning(data.learning, topic);
+            } catch (error) {
+                showError("learning-result", error.message);
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        // ============================================================
+        // SAVINGS & TAX ACCOUNT MODULE LOGIC
+        // ============================================================
+        let currentSavingsAccount = null;
+        let currentTaxSummary = null;
+        let currentSavingsTransactions = [];
+        let activeLedgerFilter = "ALL";
+
+        const savingsGuestNotice = document.getElementById("savings-guest-notice");
+        const savingsStatusBadge = document.getElementById("savings-status-badge");
+        const savingsStatusText = document.getElementById("savings-status-text");
+        const savingsHolderSub = document.getElementById("savings-holder-sub");
+        const chipAccountNum = document.getElementById("chip-account-num");
+        const chipTaxId = document.getElementById("chip-tax-id");
+        const chipInterestRate = document.getElementById("chip-interest-rate");
+        const chipTaxRate = document.getElementById("chip-tax-rate");
+
+        const metricBalanceVal = document.getElementById("metric-balance-val");
+        const metricDepositedVal = document.getElementById("metric-deposited-val");
+        const metricWithdrawnVal = document.getElementById("metric-withdrawn-val");
+        const metricGrossInterestVal = document.getElementById("metric-gross-interest-val");
+        const metricTaxWithheldVal = document.getElementById("metric-tax-withheld-val");
+        const metricNetInterestVal = document.getElementById("metric-net-interest-val");
+
+        const ledgerTableBody = document.getElementById("ledger-table-body");
+        const lookupResultBox = document.getElementById("lookup-result-box");
+
+        // Format currency helper
+        function formatUSD(num) {
+            return "$" + Number(num || 0).toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+
+        // Format date helper
+        function formatDateTime(iso) {
+            if (!iso) return "—";
+            try {
+                const d = new Date(iso);
+                return d.toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit"
+                });
+            } catch (e) {
+                return iso;
+            }
+        }
+
+        async function loadSavingsAccount() {
+            if (!currentUser || !authToken) {
+                // Logged-out state
+                currentSavingsAccount = null;
+                currentTaxSummary = null;
+                currentSavingsTransactions = [];
+
+                if (savingsGuestNotice) savingsGuestNotice.style.display = "flex";
+                if (savingsStatusBadge) {
+                    savingsStatusBadge.className = "account-status-pill guest";
+                    savingsStatusText.textContent = "Guest View";
+                }
+                if (savingsHolderSub) {
+                    savingsHolderSub.textContent = "Sign in to access your personal savings account & record";
+                }
+                if (chipAccountNum) chipAccountNum.textContent = "Sign in to view";
+                if (chipTaxId) chipTaxId.textContent = "Sign in to view";
+
+                metricBalanceVal.textContent = "$0.00";
+                metricDepositedVal.textContent = "$0.00";
+                metricWithdrawnVal.textContent = "$0.00";
+                metricGrossInterestVal.textContent = "$0.00";
+                metricTaxWithheldVal.textContent = "$0.00";
+                metricNetInterestVal.textContent = "$0.00";
+
+                document.getElementById("tax-holder-val").textContent = "— (Sign in required)";
+                document.getElementById("tax-box1-val").textContent = "$0.00";
+                document.getElementById("tax-box4-val").textContent = "$0.00";
+                document.getElementById("tax-net-val").textContent = "$0.00";
+                document.getElementById("tax-ending-bal-val").textContent = "$0.00";
+
+                renderLedgerTable([]);
+                return;
+            }
+
+            // Logged-in state: fetch account from backend
+            if (savingsGuestNotice) savingsGuestNotice.style.display = "none";
+            try {
+                const res = await fetch(`${API}/savings/account`, {
+                    headers: {
+                        "Authorization": `Bearer ${authToken}`,
+                        "Accept": "application/json"
+                    }
+                });
+                const data = await res.json();
+                if (res.ok && data.success && data.account) {
+                    currentSavingsAccount = data.account;
+                    currentTaxSummary = data.taxSummary;
+                    currentSavingsTransactions = data.transactions || [];
+
+                    // Update ID Chips
+                    if (savingsStatusBadge) {
+                        savingsStatusBadge.className = "account-status-pill active";
+                        savingsStatusText.textContent = "Active Account";
+                    }
+                    if (savingsHolderSub) {
+                        savingsHolderSub.textContent = `Account Holder: ${data.account.accountHolder} (${data.account.email})`;
+                    }
+                    if (chipAccountNum) chipAccountNum.textContent = data.account.accountNumber;
+                    if (chipTaxId) chipTaxId.textContent = data.account.taxId;
+                    if (chipInterestRate) chipInterestRate.textContent = `${data.account.interestRate.toFixed(2)}% APY`;
+                    if (chipTaxRate) chipTaxRate.textContent = `${data.account.taxWithholdingRate.toFixed(2)}% Standard`;
+
+                    // Update Metrics
+                    metricBalanceVal.textContent = formatUSD(data.account.balance);
+                    metricDepositedVal.textContent = formatUSD(data.taxSummary.totalDeposited);
+                    metricWithdrawnVal.textContent = formatUSD(data.taxSummary.totalWithdrawn);
+                    metricGrossInterestVal.textContent = formatUSD(data.taxSummary.grossInterest);
+                    metricTaxWithheldVal.textContent = formatUSD(data.taxSummary.totalTaxWithheld);
+                    metricNetInterestVal.textContent = formatUSD(data.taxSummary.netInterest);
+
+                    // Update Tax Statement
+                    document.getElementById("tax-holder-val").textContent = `${data.account.accountHolder} • ${data.account.taxId} (${data.account.accountNumber})`;
+                    document.getElementById("tax-box1-val").textContent = formatUSD(data.taxSummary.grossInterest);
+                    document.getElementById("tax-box4-val").textContent = formatUSD(data.taxSummary.totalTaxWithheld);
+                    document.getElementById("tax-net-val").textContent = formatUSD(data.taxSummary.netInterest);
+                    document.getElementById("tax-ending-bal-val").textContent = formatUSD(data.account.balance);
+
+                    renderLedgerTable(currentSavingsTransactions, activeLedgerFilter);
+                }
+            } catch (err) {
+                console.error("Error loading savings account:", err);
+            }
+        }
+
+        function renderLedgerTable(txs, filter = "ALL") {
+            if (!txs || txs.length === 0) {
+                ledgerTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; color: #94a3b8; padding: 24px;">
+                            ${currentUser ? "No transactions recorded yet. Make a deposit or accrue interest to begin." : "🔒 Sign in to view your verified account ledger or look up an account record above."}
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            let filtered = txs;
+            if (filter && filter !== "ALL") {
+                filtered = txs.filter((t) => t.type === filter);
+            }
+
+            if (filtered.length === 0) {
+                ledgerTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; color: #94a3b8; padding: 20px;">
+                            No transactions matching filter <strong>${escapeHtml(filter)}</strong> found.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            ledgerTableBody.innerHTML = filtered.map((tx) => {
+                let badgeClass = "deposit";
+                let badgeText = "DEPOSIT";
+                let grossDisplay = `+${formatUSD(tx.grossAmount || tx.netAmount)}`;
+                let grossClass = "tx-pos";
+
+                if (tx.type === "WITHDRAWAL") {
+                    badgeClass = "withdrawal";
+                    badgeText = "WITHDRAWAL";
+                    grossDisplay = `-${formatUSD(tx.grossAmount || tx.netAmount)}`;
+                    grossClass = "tx-neg";
+                } else if (tx.type === "INTEREST") {
+                    badgeClass = "interest";
+                    badgeText = "INTEREST";
+                    grossDisplay = `+${formatUSD(tx.grossAmount)}`;
+                    grossClass = "tx-pos";
+                } else if (tx.type === "TAX_WITHHOLDING") {
+                    badgeClass = "tax_withholding";
+                    badgeText = "TAX WITHHELD";
+                    grossDisplay = `-${formatUSD(tx.taxAmount || tx.grossAmount)}`;
+                    grossClass = "tx-neg";
+                }
+
+                const taxDisplay = tx.taxAmount > 0 ? `-${formatUSD(tx.taxAmount)}` : "$0.00";
+                const netDisplay = tx.type === "WITHDRAWAL" ? `-${formatUSD(tx.netAmount)}` : `+${formatUSD(tx.netAmount)}`;
+
+                return `
+                    <tr>
+                        <td style="white-space: nowrap; font-size: 0.82rem; color: #94a3b8;">
+                            ${escapeHtml(formatDateTime(tx.timestamp))}
+                        </td>
+                        <td>
+                            <span class="tx-badge ${badgeClass}">${badgeText}</span>
+                        </td>
+                        <td>
+                            <div style="font-weight: 600; color: #f1f5f9;">${escapeHtml(tx.description || "Transaction")}</div>
+                            <div style="font-size: 0.75rem; color: #64748b; font-family: monospace;">ID: ${escapeHtml(tx.id.substring(0, 13))}...</div>
+                        </td>
+                        <td class="${grossClass}" style="white-space: nowrap;">
+                            ${grossDisplay}
+                        </td>
+                        <td class="tx-tax" style="white-space: nowrap;">
+                            ${taxDisplay}
+                        </td>
+                        <td class="${grossClass}" style="white-space: nowrap;">
+                            ${netDisplay}
+                        </td>
+                        <td style="font-weight: 700; color: #fff; font-family: monospace; white-space: nowrap;">
+                            ${formatUSD(tx.balanceAfter)}
+                        </td>
+                    </tr>
+                `;
+            }).join("");
+        }
+
+        // Ledger filter buttons
+        document.querySelectorAll(".ledger-filter-btn").forEach((btn) => {
+            btn.addEventListener("click", () => {
+                document.querySelectorAll(".ledger-filter-btn").forEach((b) => b.classList.remove("active"));
+                btn.classList.add("active");
+                activeLedgerFilter = btn.dataset.filter;
+                renderLedgerTable(currentSavingsTransactions, activeLedgerFilter);
+            });
+        });
+
+        // Deposit form handler
+        document.getElementById("form-deposit").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            if (!currentUser) {
+                openAuthModal("login");
+                showToast("Please sign in to make a deposit.");
+                return;
+            }
+
+            const amount = parseFloat(document.getElementById("deposit-amount").value);
+            const note = document.getElementById("deposit-note").value.trim();
+            const btn = document.getElementById("btn-submit-deposit");
+
+            btn.disabled = true;
+            btn.textContent = "Processing Deposit...";
+
+            try {
+                const res = await post("savings/deposit", {
+                    amount,
+                    description: note || undefined
+                });
+                if (res && res.success) {
+                    showToast(res.message || "Deposit successful!");
+                    document.getElementById("form-deposit").reset();
+                    await loadSavingsAccount();
+                } else {
+                    throw new Error(res.error || "Deposit failed");
+                }
+            } catch (err) {
+                showToast(`Deposit error: ${err.message}`);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "Deposit to Savings";
+            }
+        });
+
+        // Withdrawal form handler
+        document.getElementById("form-withdraw").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            if (!currentUser) {
+                openAuthModal("login");
+                showToast("Please sign in to withdraw funds.");
+                return;
+            }
+
+            const amount = parseFloat(document.getElementById("withdraw-amount").value);
+            const note = document.getElementById("withdraw-note").value.trim();
+            const btn = document.getElementById("btn-submit-withdraw");
+
+            btn.disabled = true;
+            btn.textContent = "Processing Withdrawal...";
+
+            try {
+                const res = await post("savings/withdraw", {
+                    amount,
+                    description: note || undefined
+                });
+                if (res && res.success) {
+                    showToast(res.message || "Withdrawal successful!");
+                    document.getElementById("form-withdraw").reset();
+                    await loadSavingsAccount();
+                } else {
+                    throw new Error(res.error || "Withdrawal failed");
+                }
+            } catch (err) {
+                showToast(`Withdrawal error: ${err.message}`);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "Withdraw Funds";
+            }
+        });
+
+        // Compound Interest & Tax Accrual form handler
+        document.getElementById("form-accrue-interest").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            if (!currentUser) {
+                openAuthModal("login");
+                showToast("Please sign in to calculate & apply interest.");
+                return;
+            }
+
+            const customApy = parseFloat(document.getElementById("interest-apy").value);
+            const customTaxRate = parseFloat(document.getElementById("tax-withholding-rate").value);
+            const btn = document.getElementById("btn-submit-accrue");
+
+            btn.disabled = true;
+            btn.textContent = "Compounding & Deducting Tax...";
+
+            try {
+                const res = await post("savings/accrue-interest", {
+                    customApy,
+                    customTaxRate
+                });
+                if (res && res.success) {
+                    showToast(res.message || "Interest calculated and applied!");
+                    await loadSavingsAccount();
+                } else {
+                    throw new Error(res.error || "Interest calculation failed");
+                }
+            } catch (err) {
+                showToast(`Interest calculation notice: ${err.message}`);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "✨ Accrue Interest & Deduct Tax";
+            }
+        });
+
+        // Account Identification Lookup form handler
+        document.getElementById("form-account-lookup").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const identifier = document.getElementById("lookup-identifier-input").value.trim();
+            const btn = document.getElementById("btn-lookup-submit");
+
+            if (!identifier) return;
+
+            btn.disabled = true;
+            btn.textContent = "Searching...";
+            lookupResultBox.style.display = "none";
+            lookupResultBox.innerHTML = "";
+
+            try {
+                const res = await post("savings/lookup", { identifier });
+                if (res && res.found && res.account) {
+                    const acc = res.account;
+                    const tax = res.taxSummary || {};
+                    const recentTxs = res.recentHistory || [];
+
+                    lookupResultBox.innerHTML = `
+                        <div style="background: #0f172a; border: 1px solid #38bdf8; border-radius: 10px; padding: 18px; margin-top: 10px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span style="font-size: 1.1rem;">✅</span>
+                                    <h4 style="font-size: 1.05rem; font-weight: 700; color: #fff; margin: 0;">Verified Account Record</h4>
+                                </div>
+                                <span class="account-status-pill active">${escapeHtml(acc.status)}</span>
+                            </div>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; font-size: 0.88rem; margin-bottom: 14px;">
+                                <div><span style="color: #94a3b8;">Holder:</span> <strong style="color: #f8fafc;">${escapeHtml(acc.accountHolder)}</strong></div>
+                                <div><span style="color: #94a3b8;">Email:</span> <strong style="color: #f8fafc;">${escapeHtml(acc.maskedEmail)}</strong></div>
+                                <div><span style="color: #94a3b8;">Account #:</span> <strong style="color: #818cf8; font-family: monospace;">${escapeHtml(acc.accountNumber)}</strong></div>
+                                <div><span style="color: #94a3b8;">Tax ID:</span> <strong style="color: #818cf8; font-family: monospace;">${escapeHtml(acc.taxId)}</strong></div>
+                                <div><span style="color: #94a3b8;">Balance:</span> <strong style="color: #4ade80;">${formatUSD(acc.balance)}</strong></div>
+                                <div><span style="color: #94a3b8;">Total Tax Withheld:</span> <strong style="color: #fbbf24;">${formatUSD(tax.totalTaxWithheld)}</strong></div>
+                            </div>
+                            <div style="font-size: 0.8rem; color: #64748b;">
+                                Last Account Activity: ${escapeHtml(formatDateTime(acc.lastActivity))} • ${recentTxs.length} recent audit logs available
+                            </div>
+                        </div>
+                    `;
+                    lookupResultBox.style.display = "block";
+                    showToast("Account record verified & retrieved!");
+                } else {
+                    throw new Error(res.error || "No matching account found");
+                }
+            } catch (err) {
+                lookupResultBox.innerHTML = `
+                    <div style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 8px; padding: 12px 16px; color: #fca5a5; font-size: 0.88rem;">
+                        ⚠️ ${escapeHtml(err.message)}
+                    </div>
+                `;
+                lookupResultBox.style.display = "block";
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "🔍 Search Record";
+            }
+        });
+
+        // Copy buttons
+        document.getElementById("btn-copy-acc-num").addEventListener("click", () => {
+            const num = chipAccountNum.textContent;
+            if (num && num !== "Sign in to view") {
+                navigator.clipboard.writeText(num).then(() => showToast("Account number copied to clipboard!"));
+            } else {
+                showToast("Sign in first to view your account number.");
+            }
+        });
+
+        document.getElementById("btn-copy-tax-id").addEventListener("click", () => {
+            const taxId = chipTaxId.textContent;
+            if (taxId && taxId !== "Sign in to view") {
+                navigator.clipboard.writeText(taxId).then(() => showToast("Tax Identification Number copied!"));
+            } else {
+                showToast("Sign in first to view your Tax ID.");
+            }
+        });
+
+        // Guest sign-in button
+        document.getElementById("btn-savings-login").addEventListener("click", () => {
+            openAuthModal("login");
+        });
+
+        // Tax statement actions
+        document.getElementById("btn-refresh-tax").addEventListener("click", () => {
+            loadSavingsAccount();
+            showToast("Tax statement recalculated and updated.");
+        });
+
+        document.getElementById("btn-print-tax").addEventListener("click", () => {
+            window.print();
         });
     </script>
 </body>
