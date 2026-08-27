@@ -6,7 +6,7 @@ AllHub is a standalone Node.js and Express app for generating publication-ready 
 ## Tech Stack
 - **Frontend**: Plain HTML, CSS, and browser JavaScript
 - **Backend**: Node.js + Express
-- **AI**: OpenAI Chat Completions through the server-side `openai` package
+- **AI**: Google Gemini through the server-side `@google/genai` package
 
 ## Project Structure
 - `index.html` - Single-page publisher UI
@@ -14,7 +14,7 @@ AllHub is a standalone Node.js and Express app for generating publication-ready 
 - `server.js` - Express entry point and static file server
 - `controllers/` - Article, eBook, and story request handlers
 - `routes/` - API route definitions
-- `services/ai.js` - OpenAI prompts and response parsing
+- `services/ai.js` - Gemini prompts and response parsing
 - `utils/fetchSource.js` - Optional readable-text extraction from reference URLs
 
 ## Development
@@ -23,7 +23,7 @@ AllHub is a standalone Node.js and Express app for generating publication-ready 
 - Package manager: npm
 
 ## Environment Variables
-- `OPENAI_API_KEY` - Server-side OpenAI key required for generation
+- `GEMINI_API_KEY` - Server-side Gemini key required for generation
 - `PORT` - Server port (defaults to 5000)
 
 ## API

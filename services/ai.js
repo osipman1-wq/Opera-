@@ -1,13 +1,17 @@
-const OpenAI = require("openai");
+let gemini;
 
-function getOpenAI() {
-  if (!process.env.OPENAI_API_KEY) {
-    throw new Error("OPENAI_API_KEY is not configured on the server.");
+async function getGemini() {
+  if (!gemini) {
+    if (!process.env.GEMINI_API_KEY) {
+      throw new Error("GEMINI_API_KEY is not configured on the server.");
+    }
+    const { GoogleGenAI } = await import("@google/genai");
+    gemini = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
   }
-  return new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  return gemini;
 }
 
-const MODEL = "gpt-4o-mini";
+const MODEL = "gemini-2.5-flash";
 
 const HUMAN_STYLE_RULES = `
 Write like an experienced human writer producing finished, professional copy for publication — not like an AI assistant answering a prompt.
@@ -38,22 +42,23 @@ function buildReferenceBlock(referenceText) {
 
 async function chat(systemPrompt, userPrompt, { json = false } = {}) {
   try {
-    const response = await getOpenAI().chat.completions.create({
+    const response = await (await getGemini()).models.generateContent({
       model: MODEL,
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt }
-      ],
-      temperature: 0.8,
-      max_tokens: 4000,
-      ...(json ? { response_format: { type: "json_object" } } : {})
+      contents: userPrompt,
+      config: {
+        systemInstruction: systemPrompt,
+        temperature: 0.8,
+        maxOutputTokens: 4000,
+        ...(json ? { responseMimeType: "application/json" } : {})
+      }
     });
 
-    return response.choices[0]?.message?.content || "";
+    return response.text || "";
   } catch (error) {
-    if (error?.status === 429 || error?.code === "insufficient_quota") {
+    const status = error?.status || error?.response?.status;
+    if (status === 429) {
       const quotaError = new Error(
-        "OpenAI API quota is exhausted. Add billing or credits to the OpenAI account connected to this key, then try again."
+        "Gemini API quota is exhausted. Check the Google AI billing or quota settings for this key, then try again."
       );
       quotaError.status = 429;
       throw quotaError;
