@@ -1,0 +1,8 @@
+{
+  "name": "AllHub - AI Publisher",
+  "description": "Professional AI Publisher for generating articles, eBooks, and stories with Google Gemini.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
