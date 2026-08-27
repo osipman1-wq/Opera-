@@ -1,0 +1,113 @@
+You are a senior full-stack engineer and deployment reliability expert. Analyze and fix the issue causing the article generation system to fail after deployment.
+
+Current Issue:
+When the user clicks “Generate Pro Article” on the deployed production site, the app returns this error:
+
+{
+  "error": {
+    "code": "404",
+    "message": "The page could not be found"
+  }
+}
+
+The system works locally but fails after deployment on Vercel.
+
+Your task is to fully debug and fix the deployment architecture so article generation works reliably in production.
+
+Requirements:
+
+1. Diagnose the Root Cause
+- Check whether the API route is missing after deployment
+- Verify serverless function paths
+- Verify frontend fetch URLs
+- Check environment variables
+- Check Vercel routing configuration
+- Check API folder structure
+- Check if the backend endpoint exists in production
+- Detect incorrect relative/absolute API paths
+- Check if dynamic routes are failing
+- Verify if middleware is blocking requests
+- Check if CORS issues exist
+- Check if request body parsing fails
+- Check if deployment output excludes backend files
+
+2. Fix API Routing
+Ensure:
+- /api/generate exists in production
+- Frontend requests point to the correct deployed API endpoint
+- API calls work both locally and on deployed builds
+- No hardcoded localhost URLs remain
+- Route handlers export correctly
+- Serverless functions compile successfully
+
+3. Improve Production Stability
+Implement:
+- Proper try/catch error handling
+- API timeout handling
+- Retry logic for failed requests
+- User-friendly frontend error messages
+- Loading states while generating
+- Fallback response if AI generation fails
+- Logging for production debugging
+- Response validation before rendering
+
+4. Deployment Configuration
+Verify and fix:
+- vercel.json configuration
+- Build output settings
+- Next.js API routes
+- App Router or Pages Router compatibility
+- Edge/runtime compatibility
+- Node.js version compatibility
+- Environment variables in Vercel dashboard
+
+5. AI Content Generation Reliability
+Ensure the deployed app can:
+- Generate articles consistently
+- Handle long prompts
+- Prevent empty responses
+- Validate AI output before displaying
+- Return structured JSON safely
+- Handle rate limits gracefully
+- Prevent crashes from malformed responses
+
+6. Frontend Improvements
+Update the UI so:
+- Clicking “Generate Pro Article” immediately starts processing
+- Loading spinner appears
+- Failed requests show proper readable messages
+- Retry button appears on failure
+- Generated content renders cleanly
+- No blank white screens occur
+
+7. Add Debugging Tools
+Implement:
+- Console logging for API calls
+- Production-safe logging
+- Request/response inspection
+- Deployment health checks
+- API status monitoring endpoint
+
+8. Prevent Future Deployment Failures
+Add:
+- Validation before deployment
+- Automatic route checks
+- Environment variable validation
+- Build-time API verification
+- Graceful fallback systems
+
+9. Return the Final Solution
+Provide:
+- Fixed backend code
+- Fixed frontend fetch logic
+- Correct API route structure
+- Correct deployment configuration
+- Example vercel.json
+- Example environment variable setup
+- Final working architecture
+
+Goal:
+The deployed website must successfully generate articles in production without returning:
+“The page could not be found”.
+
+The system should be production-ready, stable, scalable, and fully compatible with Vercel deployment.
