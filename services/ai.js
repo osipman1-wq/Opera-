@@ -37,18 +37,29 @@ function buildReferenceBlock(referenceText) {
 }
 
 async function chat(systemPrompt, userPrompt, { json = false } = {}) {
-  const response = await getOpenAI().chat.completions.create({
-    model: MODEL,
-    messages: [
-      { role: "system", content: systemPrompt },
-      { role: "user", content: userPrompt }
-    ],
-    temperature: 0.8,
-    max_tokens: 4000,
-    ...(json ? { response_format: { type: "json_object" } } : {})
-  });
+  try {
+    const response = await getOpenAI().chat.completions.create({
+      model: MODEL,
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt }
+      ],
+      temperature: 0.8,
+      max_tokens: 4000,
+      ...(json ? { response_format: { type: "json_object" } } : {})
+    });
 
-  return response.choices[0]?.message?.content || "";
+    return response.choices[0]?.message?.content || "";
+  } catch (error) {
+    if (error?.status === 429 || error?.code === "insufficient_quota") {
+      const quotaError = new Error(
+        "OpenAI API quota is exhausted. Add billing or credits to the OpenAI account connected to this key, then try again."
+      );
+      quotaError.status = 429;
+      throw quotaError;
+    }
+    throw error;
+  }
 }
 
 async function generateArticle({ topic, keywords, referenceText }) {

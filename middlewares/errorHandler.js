@@ -1,6 +1,6 @@
 function errorHandler(err, req, res, next) {
   console.error(err);
-  res.status(500).json({
+  res.status(err.status || 500).json({
     success: false,
     error: err.message || "Something went wrong"
   });
